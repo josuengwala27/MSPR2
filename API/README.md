@@ -70,6 +70,15 @@ npm start
 - `PUT /api/donnees-historiques/:id` : Met à jour une donnée
 - `DELETE /api/donnees-historiques/:id` : Supprime une donnée
 
+#### Nouveaux endpoints analytiques/statistiques
+
+- `GET /api/donnees-historiques/aggregation` : Agrégation temporelle (moyenne mobile, écart-type, taux de croissance) sur une période donnée pour un pays et un indicateur.
+- `GET /api/donnees-historiques/stats` : Statistiques descriptives (min, max, moyenne, écart-type) sur une période donnée pour un pays et un indicateur.
+- `GET /api/donnees-historiques/ml-ready` : Données formatées pour Machine Learning avec features calculées (moyenne mobile, croissance, etc).
+- `GET /api/donnees-historiques/rt` : Calcul du taux de transmission Rt à une date donnée pour un pays.
+- `GET /api/donnees-historiques/mortality-rate` : Calcul du taux de mortalité sur une période autour d'une date donnée pour un pays.
+- `GET /api/donnees-historiques/geographic-spread` : Analyse de la propagation géographique (clustering des pays selon la valeur d'un indicateur à une date donnée).
+
 ## Exemples d'utilisation
 
 ### Récupérer les cas COVID en France pour 2020

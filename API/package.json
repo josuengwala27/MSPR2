@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.1",
-    "prisma": "^5.15.0"
+    "prisma": "^5.15.0",
+    "prisma-erd-generator": "^2.0.4"
   }
 }
