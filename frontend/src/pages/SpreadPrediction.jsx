@@ -274,13 +274,9 @@ const SpreadPrediction = () => {
             Prédiction Propagation des Pandémies
           </h1>
           <p className="page-subtitle">
-            Modélisation de la propagation COVID-19 & MPOX par Clustering K-Means
+            Modélisation de la propagation COVID-19 & MPOX 
           </p>
-          <div className="model-info">
-            <span className="model-badge">Clustering K-Means</span>
-            <span className="accuracy-badge">Précision: 70-75%</span>
-            <span className="data-badge">Données OMS</span>
-          </div>
+
         </div>
       </div>
 
@@ -289,7 +285,6 @@ const SpreadPrediction = () => {
         <div className="prediction-section">
           <div className="form-card">
             <h2 className="section-title">
-              <span className="section-icon">🎯</span>
               Paramètres de Propagation
             </h2>
 
@@ -433,7 +428,6 @@ const SpreadPrediction = () => {
                 </>
               ) : (
                 <>
-                  <span className="button-icon">🧬</span>
                   Modéliser la Propagation {predictionParams.disease}
                 </>
               )}
@@ -444,7 +438,6 @@ const SpreadPrediction = () => {
           {predictionResult && (
             <div className="results-card">
               <h3 className="results-title">
-                <span className="results-icon">📊</span>
                 Résultats de Modélisation - {predictionParams.disease}
               </h3>
 
@@ -515,7 +508,6 @@ const SpreadPrediction = () => {
         {/* Network Analysis */}
         <div className="analytics-section">
           <h2 className="section-title">
-            <span className="section-icon">🌐</span>
             Analyse de Réseaux - {predictionParams.disease}
           </h2>
 
@@ -523,7 +515,6 @@ const SpreadPrediction = () => {
             {/* Global Connections Network */}
             <div className="chart-card">
               <h3 className="chart-title">
-                <span className="chart-icon">🔗</span>
                 Réseau de Connexions Globales - {predictionParams.disease}
               </h3>
               <div className="network-connections">
@@ -565,7 +556,6 @@ const SpreadPrediction = () => {
             {/* Propagation Clusters */}
             <div className="chart-card">
               <h3 className="chart-title">
-                <span className="chart-icon">🎯</span>
                 Clusters de Propagation - {predictionParams.disease}
               </h3>
               <div className="clusters-analysis">
@@ -607,7 +597,7 @@ const SpreadPrediction = () => {
             {/* Transportation Factors */}
             <div className="chart-card">
               <h3 className="chart-title">
-                <span className="chart-icon">🚁</span>
+                
                 Facteurs de Transport - {predictionParams.disease}
               </h3>
               <div className="transportation-analysis">
@@ -639,7 +629,7 @@ const SpreadPrediction = () => {
             {/* Timeline Simulation */}
             <div className="chart-card">
               <h3 className="chart-title">
-                <span className="chart-icon">⏱️</span>
+              
                 Simulation Temporelle - {predictionParams.disease}
               </h3>
               <div className="timeline-simulation">
@@ -675,7 +665,7 @@ const SpreadPrediction = () => {
             {/* Hub Countries Analysis */}
             <div className="chart-card">
               <h3 className="chart-title">
-                <span className="chart-icon">🏢</span>
+                
                 Analyse des Pays-Centres - {predictionParams.disease}
               </h3>
               <div className="hubs-analysis">
@@ -715,7 +705,6 @@ const SpreadPrediction = () => {
             {/* Vulnerability Index */}
             <div className="chart-card vulnerability-analysis">
               <h3 className="chart-title">
-                <span className="chart-icon">🛡️</span>
                 Indice de Vulnérabilité - {predictionParams.disease}
               </h3>
               <div className="vulnerability-regions">

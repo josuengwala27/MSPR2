@@ -4,16 +4,17 @@
   max-width: 100%;
 }
 
-/* Header Section */
-.dashboard-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 3rem 2rem;
-  border-radius: 12px;
-  margin-bottom: 2rem;
-  text-align: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
+  /* Header Section */
+  .dashboard-header {
+    background: var(--color-primary);
+    color: white;
+    padding: 3rem 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-left: 6px solid var(--color-secondary);
+  }
 
 .header-content {
   max-width: 800px;
@@ -28,6 +29,7 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  color: white !important;
 }
 
 .title-icon {
@@ -40,6 +42,7 @@
   margin-bottom: 1.5rem;
   opacity: 0.9;
   line-height: 1.6;
+  color: white !important;
 }
 
 .last-update {
@@ -53,6 +56,7 @@
   border-radius: 25px;
   backdrop-filter: blur(10px);
   display: inline-flex;
+  color: white !important;
 }
 
 .update-icon {
@@ -179,7 +183,8 @@
 }
 
 .map-placeholder {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
   border-radius: 12px;
   padding: 2rem;
   position: relative;
@@ -209,19 +214,21 @@
   transform: scale(1.05);
 }
 
-.region.high-risk { background: linear-gradient(135deg, #e74c3c, #c0392b); }
-.region.medium-risk { background: linear-gradient(135deg, #f39c12, #e67e22); }
-.region.low-risk { background: linear-gradient(135deg, #3498db, #2980b9); }
-.region.very-low-risk { background: linear-gradient(135deg, #27ae60, #229954); }
+.region.high-risk { background: #e74c3c; }
+.region.medium-risk { background: #f39c12; }
+.region.low-risk { background: #3498db; }
+.region.very-low-risk { background: #27ae60; }
 
 .region-label {
   font-size: 1.1rem;
   font-weight: 700;
+  color: white !important;
 }
 
 .risk-level {
   font-size: 0.9rem;
   opacity: 0.9;
+  color: white !important;
 }
 
 .map-legend {
@@ -734,7 +741,7 @@
   display: block;
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-primary);
   color: white;
   text-decoration: none;
   border-radius: 8px;
@@ -850,7 +857,7 @@
 
 .confidence-fill {
   height: 100%;
-  background: linear-gradient(90deg, #28a745, #20c997);
+  background: var(--color-secondary);
   border-radius: 3px;
   transition: width 0.3s ease;
 }
@@ -894,23 +901,24 @@
 }
 
 .action-button.primary {
-  background: linear-gradient(135deg, #3498db, #2980b9);
+  background: var(--color-primary);
 }
 
 .action-button.secondary {
-  background: linear-gradient(135deg, #6c757d, #5a6268);
+  background: #6c757d;
 }
 
 .action-button.info {
-  background: linear-gradient(135deg, #17a2b8, #138496);
+  background: #17a2b8;
 }
 
 .action-button.success {
-  background: linear-gradient(135deg, #28a745, #1e7e34);
+  background: var(--color-secondary);
 }
 
-.action-icon {
-  font-size: 1.2rem;
+.action-text {
+  color: white !important;
+  font-weight: 600;
 }
 
 /* Responsive Design */

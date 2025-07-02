@@ -84,7 +84,6 @@ const RtPrediction = () => {
         <div className="prediction-form-section">
           <div className="form-card">
             <h2 className="form-title">
-              <span className="form-icon">⚙️</span>
               Paramètres de Prédiction
             </h2>
             
@@ -167,7 +166,7 @@ const RtPrediction = () => {
                   </>
                 ) : (
                   <>
-                    <span className="button-icon">🚀</span>
+                    
                     Générer la Prédiction
                   </>
                 )}
@@ -181,7 +180,6 @@ const RtPrediction = () => {
           {/* Info Box */}
           <div className="info-card">
             <h3 className="info-title">
-              <span className="info-icon">ℹ️</span>
               À propos du Rt
             </h3>
             <div className="info-content">
@@ -221,7 +219,6 @@ const RtPrediction = () => {
           <div className="results-section">
             <div className="results-header">
               <h2 className="results-title">
-                <span className="results-icon">📊</span>
                 Résultats de Prédiction - {prediction.country}
               </h2>
             </div>
@@ -229,7 +226,6 @@ const RtPrediction = () => {
             {/* KPIs actuels */}
             <div className="current-stats">
               <div className="stat-card primary">
-                <div className="stat-icon">📊</div>
                 <div className="stat-content">
                   <h3 className="stat-value">{prediction.currentRt.toFixed(2)}</h3>
                   <p className="stat-label">Rt Actuel</p>
@@ -240,7 +236,6 @@ const RtPrediction = () => {
               </div>
 
               <div className="stat-card info">
-                <div className="stat-icon">🎯</div>
                 <div className="stat-content">
                   <h3 className="stat-value">{prediction.confidence}%</h3>
                   <p className="stat-label">Confiance</p>
@@ -262,7 +257,6 @@ const RtPrediction = () => {
               <div className="chart-container">
                 <div className="chart-placeholder">
                   <div className="chart-info">
-                    <span className="chart-icon">📈</span>
                     <p>Graphique Rt sur {formData.horizon} jours</p>
                     <p className="chart-note">
                       Intégration Chart.js/D3.js à venir
