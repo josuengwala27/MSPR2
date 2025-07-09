@@ -241,17 +241,12 @@ const MortalityPrediction = () => {
       <div className="mortality-header">
         <div className="header-content">
           <h1 className="page-title">
-            <span className="title-icon">⚕️</span>
             Prédiction Taux de Mortalité
           </h1>
           <p className="page-subtitle">
-            Analyse prédictive des facteurs de mortalité COVID-19 & MPOX par Random Forest
+            Analyse prédictive des facteurs de mortalité COVID-19 & MPOX 
           </p>
-          <div className="model-info">
-            <span className="model-badge">Random Forest</span>
-            <span className="accuracy-badge">Précision: 80-85%</span>
-            <span className="data-badge">Base OMS</span>
-          </div>
+
         </div>
       </div>
 
@@ -260,7 +255,6 @@ const MortalityPrediction = () => {
         <div className="prediction-section">
           <div className="form-card">
             <h2 className="section-title">
-              <span className="section-icon">🔮</span>
               Paramètres de Prédiction
             </h2>
 
@@ -398,7 +392,7 @@ const MortalityPrediction = () => {
                 </>
               ) : (
                 <>
-                  <span className="button-icon">🧮</span>
+                  
                   Prédire la Mortalité {predictionParams.disease}
                 </>
               )}
@@ -409,7 +403,7 @@ const MortalityPrediction = () => {
           {predictionResult && (
             <div className="results-card">
               <h3 className="results-title">
-                <span className="results-icon">📊</span>
+                
                 Résultats de Prédiction - {predictionParams.disease}
               </h3>
 
@@ -470,7 +464,7 @@ const MortalityPrediction = () => {
         {/* Analytics Section */}
         <div className="analytics-section">
           <h2 className="section-title">
-            <span className="section-icon">📈</span>
+            
             Analyses de Mortalité - {predictionParams.disease}
           </h2>
 
@@ -478,7 +472,7 @@ const MortalityPrediction = () => {
             {/* Age Group Analysis */}
             <div className="chart-card">
               <h3 className="chart-title">
-                <span className="chart-icon">👥</span>
+                
                 Mortalité par Groupe d'Âge - {predictionParams.disease}
               </h3>
               <div className="age-mortality-chart">
@@ -507,7 +501,7 @@ const MortalityPrediction = () => {
             {/* Risk Factors Analysis */}
             <div className="chart-card">
               <h3 className="chart-title">
-                <span className="chart-icon">🏥</span>
+               
                 Facteurs de Risque - {predictionParams.disease}
               </h3>
               <div className="comorbidity-chart">
@@ -539,7 +533,7 @@ const MortalityPrediction = () => {
             {/* Country Comparison */}
             <div className="chart-card">
               <h3 className="chart-title">
-                <span className="chart-icon">🌍</span>
+                
                 Comparaison Internationale
               </h3>
               <div className="country-comparison-chart">
@@ -576,7 +570,6 @@ const MortalityPrediction = () => {
             {/* Risk Factors Weight Analysis */}
             <div className="chart-card risk-factors-analysis">
               <h3 className="chart-title">
-                <span className="chart-icon">⚖️</span>
                 Poids des Facteurs de Risque - {predictionParams.disease}
               </h3>
               <div className="risk-categories">

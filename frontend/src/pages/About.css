@@ -1,4 +1,4 @@
-/* About Page Styles */
+/* About Page Styles - Thème Professionnel */
 .about {
   padding: 0;
   max-width: 100%;
@@ -6,13 +6,14 @@
 
 /* Header */
 .about-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-primary);
   color: white;
   padding: 3rem 2rem;
   border-radius: 12px;
   margin-bottom: 3rem;
   text-align: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-left: 6px solid var(--color-secondary);
 }
 
 .about-title {
@@ -23,11 +24,12 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  color: white !important;
 }
 
 .title-icon {
   font-size: 3rem;
-  animation: pulse 2s infinite;
+  color: var(--color-secondary-light);
 }
 
 .about-subtitle {
@@ -36,6 +38,7 @@
   line-height: 1.6;
   max-width: 800px;
   margin: 0 auto;
+  color: white !important;
 }
 
 /* Sections */
@@ -69,7 +72,7 @@
 }
 
 .section-description {
-  color: #6c757d;
+  color: var(--color-text-secondary);
   font-size: 1.1rem;
   max-width: 600px;
   margin: 0 auto;
@@ -88,7 +91,7 @@
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border-left: 5px solid #3498db;
+  border-left: 5px solid var(--color-primary-light);
   transition: transform 0.3s ease;
 }
 
@@ -104,7 +107,7 @@
 }
 
 .mission-text {
-  color: #5a6c7d;
+  color: #01294e;
   line-height: 1.7;
   margin: 0;
 }
@@ -182,7 +185,7 @@
 }
 
 .model-description {
-  color: #5a6c7d;
+  color: #01294e;
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
@@ -317,7 +320,7 @@
 }
 
 .limitation-description {
-  color: #5a6c7d;
+  color: #01294e;
   line-height: 1.6;
   margin-bottom: 1rem;
 }
@@ -361,7 +364,7 @@
 }
 
 .tech-item {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-primary);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 20px;
@@ -411,17 +414,17 @@
 }
 
 .contact-link {
-  color: #3498db;
+  color: var(--color-primary-light);
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .contact-link:hover {
-  color: #2980b9;
+  color: var(--color-primary);
 }
 
 .team-description {
-  color: #5a6c7d;
+  color: #01294e;
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
@@ -431,7 +434,7 @@
 }
 
 .version-badge {
-  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+  background: var(--color-secondary);
   color: white;
   padding: 0.5rem 1.5rem;
   border-radius: 25px;

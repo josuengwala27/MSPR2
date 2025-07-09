@@ -134,7 +134,6 @@ const Dashboard = () => {
       {/* Global Statistics */}
       <div className="stats-grid">
         <div className="stat-card primary">
-          <div className="stat-icon">🌍</div>
           <div className="stat-content">
             <h3 className="stat-value">{globalStats.totalCountries}</h3>
             <p className="stat-label">Pays Surveillés</p>
@@ -150,7 +149,6 @@ const Dashboard = () => {
         </div>
 
         <div className="stat-card warning">
-          <div className="stat-icon">📊</div>
           <div className="stat-content">
             <h3 className="stat-value">{globalStats.averageRt}</h3>
             <p className="stat-label">Rt Moyen Mondial</p>
@@ -158,7 +156,6 @@ const Dashboard = () => {
         </div>
 
         <div className="stat-card info">
-          <div className="stat-icon">⚕️</div>
           <div className="stat-content">
             <h3 className="stat-value">{globalStats.mortalityRate}%</h3>
             <p className="stat-label">Taux de Mortalité</p>
@@ -166,7 +163,6 @@ const Dashboard = () => {
         </div>
 
         <div className="stat-card success">
-          <div className="stat-icon">🧬</div>
           <div className="stat-content">
             <h3 className="stat-value">{globalStats.mpoxCases}</h3>
             <p className="stat-label">Cas MPOX</p>
@@ -185,7 +181,6 @@ const Dashboard = () => {
       {/* Charts and Analytics Section */}
       <div className="analytics-section">
         <h2 className="section-title">
-          <span className="section-icon">📈</span>
           Analyses et Tendances
         </h2>
 
@@ -193,7 +188,6 @@ const Dashboard = () => {
           {/* World Map Visualization */}
           <div className="chart-card world-map">
             <h3 className="chart-title">
-              <span className="chart-icon">🗺️</span>
               Carte Mondiale des Risques
             </h3>
             <div className="world-map-container">
@@ -241,7 +235,6 @@ const Dashboard = () => {
           {/* Time Series Chart */}
           <div className="chart-card time-series">
             <h3 className="chart-title">
-              <span className="chart-icon">📊</span>
               Évolution Temporelle (7 derniers jours)
             </h3>
             <div className="time-series-chart">
@@ -271,7 +264,6 @@ const Dashboard = () => {
           {/* Top Countries Chart */}
           <div className="chart-card countries-ranking">
             <h3 className="chart-title">
-              <span className="chart-icon">🏆</span>
               Top 8 Pays - Données Actuelles
             </h3>
             <div className="countries-chart">
@@ -315,7 +307,6 @@ const Dashboard = () => {
           {/* Risk Analysis Pie Chart */}
           <div className="chart-card risk-analysis">
             <h3 className="chart-title">
-              <span className="chart-icon">⚠️</span>
               Analyse des Risques par Région
             </h3>
             <div className="risk-pie-chart">
@@ -364,7 +355,6 @@ const Dashboard = () => {
           {/* Model Performance Chart */}
           <div className="chart-card model-performance">
             <h3 className="chart-title">
-              <span className="chart-icon">🤖</span>
               Performance des Modèles IA
             </h3>
             <div className="performance-chart">
@@ -414,13 +404,11 @@ const Dashboard = () => {
           {/* Real-time Monitoring */}
           <div className="chart-card realtime-monitoring">
             <h3 className="chart-title">
-              <span className="chart-icon">⚡</span>
               Surveillance Temps Réel
             </h3>
             <div className="monitoring-dashboard">
               <div className="monitoring-metrics">
                 <div className="metric-item active">
-                  <div className="metric-icon">🔴</div>
                   <div className="metric-content">
                     <span className="metric-label">Alertes Actives</span>
                     <span className="metric-value">3</span>
@@ -428,14 +416,12 @@ const Dashboard = () => {
                   <div className="metric-pulse"></div>
                 </div>
                 <div className="metric-item">
-                  <div className="metric-icon">⏰</div>
                   <div className="metric-content">
                     <span className="metric-label">Dernière Analyse</span>
                     <span className="metric-value">2 min</span>
                   </div>
                 </div>
                 <div className="metric-item">
-                  <div className="metric-icon">📡</div>
                   <div className="metric-content">
                     <span className="metric-label">Sources Actives</span>
                     <span className="metric-value">195</span>
@@ -469,7 +455,6 @@ const Dashboard = () => {
         <div className="module-card">
           <div className="module-header">
             <h3 className="module-title">
-              <span className="module-icon">📈</span>
               Prédiction Taux de Transmission (Rt)
             </h3>
             <p className="module-description">
@@ -494,7 +479,6 @@ const Dashboard = () => {
         <div className="module-card">
           <div className="module-header">
             <h3 className="module-title">
-              <span className="module-icon">⚕️</span>
               Prédiction Taux de Mortalité
             </h3>
             <p className="module-description">
@@ -519,7 +503,6 @@ const Dashboard = () => {
         <div className="module-card">
           <div className="module-header">
             <h3 className="module-title">
-              <span className="module-icon">🌍</span>
               Propagation Géographique
             </h3>
             <p className="module-description">
@@ -545,7 +528,6 @@ const Dashboard = () => {
       {/* Recent Predictions */}
       <div className="recent-predictions">
         <h2 className="section-title">
-          <span className="section-icon">🔮</span>
           Prédictions Récentes
         </h2>
         <div className="predictions-grid">
@@ -588,31 +570,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="quick-actions">
-        <h2 className="section-title">
-          <span className="section-icon">⚡</span>
-          Actions Rapides
-        </h2>
-        <div className="actions-grid">
-          <button className="action-button primary">
-            <span className="action-icon">📊</span>
-            <span className="action-text">Nouvelle Prédiction</span>
-          </button>
-          <button className="action-button secondary">
-            <span className="action-icon">📈</span>
-            <span className="action-text">Analyser Tendances</span>
-          </button>
-          <button className="action-button info">
-            <span className="action-icon">🌍</span>
-            <span className="action-text">Carte Mondiale</span>
-          </button>
-          <button className="action-button success">
-            <span className="action-icon">📋</span>
-            <span className="action-text">Rapport Complet</span>
-          </button>
-        </div>
-      </div>
+
     </div>
   );
 };
