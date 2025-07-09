@@ -194,41 +194,44 @@
 .map-regions {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: 1.5rem;
   margin-bottom: 2rem;
 }
-
 .region {
-  padding: 1.5rem;
-  border-radius: 10px;
-  text-align: center;
-  color: white;
-  font-weight: 600;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
+  align-items: center;
+  justify-content: center;
+  min-height: 110px;
+  border-radius: 14px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 1.5rem 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  text-align: center;
 }
-
 .region:hover {
-  transform: scale(1.05);
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.13);
 }
-
 .region.high-risk { background: #e74c3c; }
 .region.medium-risk { background: #f39c12; }
 .region.low-risk { background: #3498db; }
 .region.very-low-risk { background: #27ae60; }
-
 .region-label {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  color: white !important;
+  color: #fff;
+  margin-bottom: 0.5rem;
 }
-
 .risk-level {
-  font-size: 0.9rem;
-  opacity: 0.9;
-  color: white !important;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  opacity: 0.95;
 }
 
 .map-legend {
@@ -260,6 +263,16 @@
 /* Time Series Chart */
 .time-series-chart {
   min-height: 300px;
+}
+
+.chart-period-subtitle {
+  font-size: 1.05rem;
+  color: #64748b;
+  font-weight: 500;
+  margin-bottom: 0.7rem;
+  margin-top: -0.7rem;
+  text-align: left;
+  letter-spacing: 0.01em;
 }
 
 .chart-controls {
@@ -1092,4 +1105,50 @@
   .dashboard-header {
     background: #000000;
   }
+} 
+
+.disease-selector {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-bottom: 2.5rem;
+  margin-top: 1.5rem;
+}
+.disease-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 2rem;
+  border: 2.5px solid;
+  background: #fff;
+  padding: 0.65rem 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s, border-color 0.18s;
+  outline: none;
+  min-width: 120px;
+  justify-content: center;
+}
+.disease-btn .disease-icon {
+  font-size: 1.45rem;
+  display: flex;
+  align-items: center;
+}
+.disease-btn.selected {
+  color: #fff !important;
+  background: var(--disease-selected-bg, #3498db);
+  border-color: var(--disease-selected-bg, #3498db);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.10);
+}
+.disease-btn.selected[data-disease="covid"] {
+  --disease-selected-bg: #3498db;
+}
+.disease-btn.selected[data-disease="mpox"] {
+  --disease-selected-bg: #27ae60;
+}
+.disease-btn:not(.selected):hover {
+  background: #f4f8fb;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
 } 

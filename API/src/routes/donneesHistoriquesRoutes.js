@@ -415,30 +415,111 @@ router.get('/rt', requireSource, async (req, res) => {
     }
     // Regroupement par date unique (moyenne des values si plusieurs)
     const grouped = groupByDateAndAggregate(donnees, 'value', 'mean');
+
+    // === INTERPOLATION LINÉAIRE DES VALEURS MANQUANTES ===
+    function interpolateSeries(arr, key) {
+      // arr: [{date, mean}, ...]
+      let result = arr.map(r => ({ ...r }));
+      let n = result.length;
+      let lastValidIdx = null;
+      for (let i = 0; i < n; i++) {
+        if (result[i][key] == null) {
+          // Cherche le prochain non-null
+          let nextValidIdx = null;
+          for (let j = i + 1; j < n; j++) {
+            if (result[j][key] != null) {
+              nextValidIdx = j;
+              break;
+            }
+          }
+          if (lastValidIdx !== null && nextValidIdx !== null) {
+            // Interpolation linéaire
+            let v1 = result[lastValidIdx][key];
+            let v2 = result[nextValidIdx][key];
+            let steps = nextValidIdx - lastValidIdx;
+            for (let k = 1; k < steps; k++) {
+              result[lastValidIdx + k][key] = v1 + (v2 - v1) * (k / steps);
+            }
+            i = nextValidIdx - 1; // on saute jusqu'au prochain non-null
+          } else if (lastValidIdx !== null) {
+            // Remplir avec la dernière valeur connue (forward fill)
+            for (let k = i; k < n; k++) {
+              result[k][key] = result[lastValidIdx][key];
+            }
+            break;
+          } else if (nextValidIdx !== null) {
+            // Remplir avec la première valeur connue (backward fill)
+            for (let k = 0; k < nextValidIdx; k++) {
+              result[k][key] = result[nextValidIdx][key];
+            }
+            i = nextValidIdx - 1;
+          }
+        } else {
+          lastValidIdx = i;
+        }
+      }
+      return result;
+    }
+    // === INTERPOLATION ET IMPUTATION AVANCÉE DES VALEURS MANQUANTES ===
+    function advancedImpute(arr, key) {
+      // 1. Interpolation linéaire (déjà existant)
+      let result = interpolateSeries(arr, key);
+      let n = result.length;
+      // 2. Forward fill
+      for (let i = 1; i < n; i++) {
+        if (result[i][key] == null) result[i][key] = result[i-1][key];
+      }
+      // 3. Backward fill
+      for (let i = n - 2; i >= 0; i--) {
+        if (result[i][key] == null) result[i][key] = result[i+1][key];
+      }
+      // 4. Moyenne glissante pour trous isolés
+      for (let i = 1; i < n - 1; i++) {
+        if (result[i][key] == null && result[i-1][key] != null && result[i+1][key] != null) {
+          result[i][key] = (result[i-1][key] + result[i+1][key]) / 2;
+        }
+      }
+      return result;
+    }
+    const groupedImputed = advancedImpute(grouped, 'mean');
+
+    // Calcul du pourcentage de valeurs nulles restantes
+    const nullCount = groupedImputed.filter(r => r.mean == null).length;
+    const nullPct = (nullCount / groupedImputed.length) * 100;
+
     const win = parseInt(window);
-    const dataRt = grouped.map((row, idx, arr) => {
+    const epsilon = 0.1; // Petite valeur pour éviter division par zéro
+    const dataRt = groupedImputed.map((row, idx, arr) => {
       let Rt = null;
       if (idx >= win) {
         const valNow = arr[idx].mean;
-        const valPast = arr[idx - win].mean;
-        if (valPast && valPast !== 0) {
-          Rt = Math.pow(valNow / valPast, 1 / win);
-        }
+        let valPast = arr[idx - win].mean;
+        if (valPast == null) valPast = epsilon;
+        if (valPast === 0) valPast = epsilon;
+        Rt = Math.pow(valNow / valPast, 1 / win);
       }
       return {
         date: row.date,
         Rt
       };
     });
+    const meta = {
+      pays,
+      indicator,
+      source: source || donnees[0]?.source,
+      window: win,
+      count: dataRt.length,
+      interpolation: true,
+      imputation_method: 'linear interpolation + forward fill + backward fill + moving average',
+      null_percentage: nullPct,
+      force_epsilon: true
+    };
+    if (nullPct > 10) {
+      meta.warning = `Attention : ${nullPct.toFixed(1)}% des valeurs restent nulles après imputation avancée. Les résultats peuvent être peu fiables.`;
+    }
     res.json({
       data: dataRt,
-      meta: {
-        pays,
-        indicator,
-        source: source || donnees[0]?.source, // Ajout de la source dans les métadonnées
-        window: win,
-        count: dataRt.length
-      }
+      meta
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -1,4 +1,4 @@
-# Dossier de Livrables – Plateforme IA Prédiction Pandémies (OMS)
+# Livrables – Plateforme IA Prédiction Pandémies (OMS)
 
 ---
 

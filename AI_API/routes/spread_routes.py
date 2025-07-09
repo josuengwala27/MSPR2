@@ -130,30 +130,22 @@ async def predict_spread(
         raise HTTPException(status_code=400, detail="Le paramètre 'source' (ex: covid, mpox) est obligatoire.")
     try:
         data = await express_client.get_geographic_spread(indicator=indicator, source=source, k=k)
-        series = []
-        # On attend une clé 'series' ou 'clusters' selon l'API Express.js
-        if "series" in data:
-            series = data["series"]
-        elif "clusters" in data and isinstance(data["clusters"], list):
-            # Si déjà clusterisé côté Express, on recompose la liste
-            for group in data["clusters"]:
-                for country in group.get("countries", []):
-                    # Pas de valeurs, donc on ne peut pas re-clusteriser
-                    pass
-            raise HTTPException(status_code=501, detail="L'API Express.js retourne déjà des clusters. Contactez l'équipe backend.")
-        else:
-            # Fallback : on tente d'utiliser 'data' comme liste
-            if isinstance(data, list):
-                series = data
+        # Si la réponse contient déjà des clusters, on relaie directement
+        if "clusters" in data and isinstance(data["clusters"], list):
+            # Ajoute une mention dans la meta
+            if "meta" in data and isinstance(data["meta"], dict):
+                data["meta"]["clustering_location"] = "express"
             else:
-                raise HTTPException(status_code=500, detail="Format inattendu des données de l'API Express.js.")
-        # Clustering
+                data["meta"] = {"clustering_location": "express"}
+            return data
+        # Sinon, on attend une clé 'series' pour clusteriser côté IA (fallback)
+        series = data.get("series", [])
         result = cluster_countries(series, k=k)
-        # Ajout de doc et métadonnées
         result["meta"].update({
             "indicator": indicator,
             "source": source,
-            "doc": "Clustering KMeans sur les séries temporelles de chaque pays. Les pays d'un même cluster présentent une dynamique similaire pour l'indicateur donné."
+            "doc": "Clustering KMeans sur les séries temporelles de chaque pays. Les pays d'un même cluster présentent une dynamique similaire pour l'indicateur donné.",
+            "clustering_location": "ia"
         })
         return result
     except HTTPException as e:
@@ -164,15 +156,15 @@ async def predict_spread(
 
 @router.get("/model-info")
 async def get_spread_model_info() -> Dict[str, Any]:
-    """Retourne les informations sur le modèle de propagation"""
-    
+    """Retourne les informations sur le modèle de propagation géographique"""
     return {
-        "model_type": "Clustering Avancé (en développement)",
-        "description": "Modèle de prédiction de propagation géographique",
-        "status": "en_development",
-        "planned_features": [
+        "model_type": "Clustering KMeans multi-pays",
+        "description": "Modèle de propagation géographique par clustering KMeans sur les séries temporelles de cas ou décès. Permet d’identifier des groupes de pays à dynamique épidémique similaire.",
+        "status": "operational",
+        "features": [
             "clustering temporel",
-            "analyse de similarité",
+            "analyse de similarité multi-pays",
             "prédiction de clusters"
-        ]
+        ],
+        "clustering_location": "express"
     } 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ChartComponent from '../components/Charts/ChartComponent';
 import './MortalityPrediction.css';
 
 const MortalityPrediction = () => {
@@ -9,7 +10,8 @@ const MortalityPrediction = () => {
     riskFactors: [],
     healthcareCapacity: 'medium',
     vaccinationRate: 70,
-    timeHorizon: 30
+    timeHorizon: 30,
+    date: new Date().toISOString().split('T')[0] // NEW: date field
   });
 
   const [predictionResult, setPredictionResult] = useState(null);
@@ -18,55 +20,61 @@ const MortalityPrediction = () => {
   const [mortalityData] = useState({
     byAgeGroup: {
       'COVID-19': [
-        { ageGroup: '0-9', mortalityRate: 0.001, cases: 45000, deaths: 45, deaths_per_100k: 0.1 },
-        { ageGroup: '10-19', mortalityRate: 0.002, cases: 52000, deaths: 104, deaths_per_100k: 0.2 },
-        { ageGroup: '20-29', mortalityRate: 0.005, cases: 78000, deaths: 390, deaths_per_100k: 0.5 },
-        { ageGroup: '30-39', mortalityRate: 0.02, cases: 89000, deaths: 1780, deaths_per_100k: 2.0 },
-        { ageGroup: '40-49', mortalityRate: 0.04, cases: 95000, deaths: 3800, deaths_per_100k: 4.0 },
-        { ageGroup: '50-59', mortalityRate: 0.13, cases: 82000, deaths: 10660, deaths_per_100k: 13.0 },
-        { ageGroup: '60-69', mortalityRate: 0.36, cases: 67000, deaths: 24120, deaths_per_100k: 36.0 },
-        { ageGroup: '70-79', mortalityRate: 0.8, cases: 45000, deaths: 36000, deaths_per_100k: 80.0 },
-        { ageGroup: '80+', mortalityRate: 1.48, cases: 32000, deaths: 47360, deaths_per_100k: 148.0 }
+        { ageGroup: '0-9', mortalityRate: 0.0001, cases: 45000, deaths: 5, deaths_per_100k: 0.01 },
+        { ageGroup: '10-19', mortalityRate: 0.0002, cases: 52000, deaths: 10, deaths_per_100k: 0.02 },
+        { ageGroup: '20-29', mortalityRate: 0.0005, cases: 78000, deaths: 39, deaths_per_100k: 0.05 },
+        { ageGroup: '30-39', mortalityRate: 0.001, cases: 89000, deaths: 89, deaths_per_100k: 0.1 },
+        { ageGroup: '40-49', mortalityRate: 0.003, cases: 95000, deaths: 285, deaths_per_100k: 0.3 },
+        { ageGroup: '50-59', mortalityRate: 0.008, cases: 82000, deaths: 656, deaths_per_100k: 0.8 },
+        { ageGroup: '60-69', mortalityRate: 0.025, cases: 67000, deaths: 1675, deaths_per_100k: 2.5 },
+        { ageGroup: '70-79', mortalityRate: 0.08, cases: 45000, deaths: 3600, deaths_per_100k: 8.0 },
+        { ageGroup: '80+', mortalityRate: 0.15, cases: 32000, deaths: 4800, deaths_per_100k: 15.0 }
       ],
       'MPOX': [
-        { ageGroup: '0-9', mortalityRate: 0.8, cases: 1200, deaths: 96, deaths_per_100k: 8.0 },
-        { ageGroup: '10-19', mortalityRate: 0.5, cases: 2800, deaths: 140, deaths_per_100k: 5.0 },
-        { ageGroup: '20-29', mortalityRate: 0.3, cases: 15600, deaths: 468, deaths_per_100k: 3.0 },
-        { ageGroup: '30-39', mortalityRate: 0.4, cases: 12400, deaths: 496, deaths_per_100k: 4.0 },
-        { ageGroup: '40-49', mortalityRate: 0.6, cases: 8900, deaths: 534, deaths_per_100k: 6.0 },
-        { ageGroup: '50-59', mortalityRate: 1.2, cases: 5200, deaths: 624, deaths_per_100k: 12.0 },
-        { ageGroup: '60-69', mortalityRate: 2.1, cases: 3100, deaths: 651, deaths_per_100k: 21.0 },
-        { ageGroup: '70-79', mortalityRate: 3.5, cases: 1800, deaths: 630, deaths_per_100k: 35.0 },
-        { ageGroup: '80+', mortalityRate: 5.2, cases: 900, deaths: 468, deaths_per_100k: 52.0 }
+        { ageGroup: '0-9', mortalityRate: 0.02, cases: 1200, deaths: 24, deaths_per_100k: 2.0 },
+        { ageGroup: '10-19', mortalityRate: 0.01, cases: 2800, deaths: 28, deaths_per_100k: 1.0 },
+        { ageGroup: '20-29', mortalityRate: 0.008, cases: 15600, deaths: 125, deaths_per_100k: 0.8 },
+        { ageGroup: '30-39', mortalityRate: 0.012, cases: 12400, deaths: 149, deaths_per_100k: 1.2 },
+        { ageGroup: '40-49', mortalityRate: 0.018, cases: 8900, deaths: 160, deaths_per_100k: 1.8 },
+        { ageGroup: '50-59', mortalityRate: 0.025, cases: 5200, deaths: 130, deaths_per_100k: 2.5 },
+        { ageGroup: '60-69', mortalityRate: 0.035, cases: 3100, deaths: 109, deaths_per_100k: 3.5 },
+        { ageGroup: '70-79', mortalityRate: 0.045, cases: 1800, deaths: 81, deaths_per_100k: 4.5 },
+        { ageGroup: '80+', mortalityRate: 0.06, cases: 900, deaths: 54, deaths_per_100k: 6.0 }
       ]
     },
     byRiskFactor: {
       'COVID-19': [
-        { factor: 'Maladies cardiovasculaires', riskMultiplier: 2.8, prevalence: 8.9, mortality: 6.1 },
-        { factor: 'Diabète', riskMultiplier: 2.3, prevalence: 15.2, mortality: 4.8 },
-        { factor: 'Maladies respiratoires chroniques', riskMultiplier: 2.2, prevalence: 7.5, mortality: 4.1 },
-        { factor: 'Hypertension', riskMultiplier: 1.8, prevalence: 28.7, mortality: 3.2 },
-        { factor: 'Immunodéficience', riskMultiplier: 3.1, prevalence: 2.1, mortality: 7.2 },
-        { factor: 'Maladie rénale chronique', riskMultiplier: 2.5, prevalence: 4.2, mortality: 5.8 }
+        { factor: 'Maladies cardiovasculaires', riskMultiplier: 3.2, prevalence: 8.9, mortality: 8.5 },
+        { factor: 'Diabète', riskMultiplier: 2.8, prevalence: 15.2, mortality: 6.2 },
+        { factor: 'Maladies respiratoires chroniques', riskMultiplier: 2.5, prevalence: 7.5, mortality: 5.8 },
+        { factor: 'Hypertension', riskMultiplier: 2.1, prevalence: 28.7, mortality: 4.9 },
+        { factor: 'Immunodéficience', riskMultiplier: 4.5, prevalence: 2.1, mortality: 12.8 },
+        { factor: 'Maladie rénale chronique', riskMultiplier: 3.8, prevalence: 4.2, mortality: 8.9 },
+        { factor: 'Obésité (IMC > 30)', riskMultiplier: 2.3, prevalence: 18.5, mortality: 5.4 },
+        { factor: 'Cancer actif', riskMultiplier: 3.5, prevalence: 1.8, mortality: 9.2 }
       ],
       'MPOX': [
-        { factor: 'Immunodéficience/VIH', riskMultiplier: 4.2, prevalence: 1.8, mortality: 12.1 },
-        { factor: 'Eczéma atopique', riskMultiplier: 2.1, prevalence: 8.4, mortality: 3.8 },
-        { factor: 'Grossesse', riskMultiplier: 3.5, prevalence: 1.2, mortality: 8.5 },
-        { factor: 'Âge < 8 ans', riskMultiplier: 2.8, prevalence: 12.1, mortality: 6.2 },
-        { factor: 'Malnutrition sévère', riskMultiplier: 2.4, prevalence: 0.8, mortality: 4.9 },
-        { factor: 'Maladies dermatologiques', riskMultiplier: 1.9, prevalence: 3.2, mortality: 2.7 }
+        { factor: 'Immunodéficience/VIH', riskMultiplier: 8.5, prevalence: 1.8, mortality: 25.4 },
+        { factor: 'Eczéma atopique', riskMultiplier: 3.2, prevalence: 8.4, mortality: 8.9 },
+        { factor: 'Grossesse', riskMultiplier: 4.8, prevalence: 1.2, mortality: 15.2 },
+        { factor: 'Âge < 8 ans', riskMultiplier: 2.5, prevalence: 12.1, mortality: 7.8 },
+        { factor: 'Malnutrition sévère', riskMultiplier: 3.8, prevalence: 0.8, mortality: 12.1 },
+        { factor: 'Maladies dermatologiques', riskMultiplier: 2.8, prevalence: 3.2, mortality: 6.4 },
+        { factor: 'Brûlures étendues', riskMultiplier: 5.2, prevalence: 0.3, mortality: 18.9 },
+        { factor: 'Traitement immunosuppresseur', riskMultiplier: 6.1, prevalence: 1.5, mortality: 22.3 }
       ]
     },
     byCountry: [
-      { country: 'France', iso_code: 'FRA', covid_mortality: 2.1, mpox_mortality: 0.8, healthcare_index: 85, vaccination_rate: 78 },
-      { country: 'Allemagne', iso_code: 'DEU', covid_mortality: 1.9, mpox_mortality: 0.6, healthcare_index: 88, vaccination_rate: 76 },
-      { country: 'Italie', iso_code: 'ITA', covid_mortality: 2.8, mpox_mortality: 1.1, healthcare_index: 79, vaccination_rate: 73 },
-      { country: 'Espagne', iso_code: 'ESP', covid_mortality: 2.3, mpox_mortality: 0.9, healthcare_index: 82, vaccination_rate: 81 },
-      { country: 'Royaume-Uni', iso_code: 'GBR', covid_mortality: 2.5, mpox_mortality: 0.7, healthcare_index: 84, vaccination_rate: 75 },
-      { country: 'USA', iso_code: 'USA', covid_mortality: 3.1, mpox_mortality: 1.4, healthcare_index: 72, vaccination_rate: 68 },
-      { country: 'Brésil', iso_code: 'BRA', covid_mortality: 4.2, mpox_mortality: 2.1, healthcare_index: 65, vaccination_rate: 62 },
-      { country: 'Inde', iso_code: 'IND', covid_mortality: 1.8, mpox_mortality: 1.8, healthcare_index: 58, vaccination_rate: 71 }
+      { country: 'France', iso_code: 'FRA', covid_mortality: 0.18, mpox_mortality: 0.008, healthcare_index: 85, vaccination_rate: 78 },
+      { country: 'Allemagne', iso_code: 'DEU', covid_mortality: 0.16, mpox_mortality: 0.006, healthcare_index: 88, vaccination_rate: 76 },
+      { country: 'Italie', iso_code: 'ITA', covid_mortality: 0.22, mpox_mortality: 0.011, healthcare_index: 79, vaccination_rate: 73 },
+      { country: 'Espagne', iso_code: 'ESP', covid_mortality: 0.19, mpox_mortality: 0.009, healthcare_index: 82, vaccination_rate: 81 },
+      { country: 'Royaume-Uni', iso_code: 'GBR', covid_mortality: 0.21, mpox_mortality: 0.007, healthcare_index: 84, vaccination_rate: 75 },
+      { country: 'USA', iso_code: 'USA', covid_mortality: 0.28, mpox_mortality: 0.014, healthcare_index: 72, vaccination_rate: 68 },
+      { country: 'Brésil', iso_code: 'BRA', covid_mortality: 0.35, mpox_mortality: 0.021, healthcare_index: 65, vaccination_rate: 62 },
+      { country: 'Inde', iso_code: 'IND', covid_mortality: 0.12, mpox_mortality: 0.018, healthcare_index: 58, vaccination_rate: 71 },
+      { country: 'Afrique du Sud', iso_code: 'ZAF', covid_mortality: 0.42, mpox_mortality: 0.025, healthcare_index: 52, vaccination_rate: 45 },
+      { country: 'RDC', iso_code: 'COD', covid_mortality: 0.38, mpox_mortality: 0.085, healthcare_index: 35, vaccination_rate: 28 }
     ]
   });
 
@@ -108,8 +116,9 @@ const MortalityPrediction = () => {
   });
 
   const countries = [
-    'France', 'Allemagne', 'Italie', 'Espagne', 'Royaume-Uni', 
-    'USA', 'Brésil', 'Inde', 'Chine', 'Japon'
+    'USA', 'China', 'India', 'France', 'Germany', 'Brazil', 'Japan', 'South Korea',
+    'RDC', 'Nigeria', 'UK', 'Spain', 'South Africa', 'Portugal', 'Australia', 'Canada',
+    'Cameroun', 'Ghana', 'Italie', 'Russie', 'Mexique', 'Turquie', 'Iran', 'Singapore', 'Taiwan'
   ];
 
   const diseases = [
@@ -168,42 +177,81 @@ const MortalityPrediction = () => {
     
     // Simulation d'un appel API avec données réalistes COVID/MPOX
     setTimeout(() => {
+      const simDate = new Date(predictionParams.date);
+      const year = simDate.getFullYear();
+      let pandemicFactor = 1;
+      if (predictionParams.disease === 'COVID-19') {
+        if (year <= 2020) pandemicFactor = 2.5; // Early pandemic, high mortality
+        else if (year === 2021) pandemicFactor = 1.5;
+        else if (year === 2022) pandemicFactor = 1.1;
+        else if (year >= 2023) pandemicFactor = 0.1; // Endemic, ultra-low mortality
+      } else if (predictionParams.disease === 'MPOX') {
+        if (year <= 2022) pandemicFactor = 1.5;
+        else pandemicFactor = 0.3; // Lower mortality for MPOX after 2022
+      }
+
+      // Taux de mortalité de base plus réalistes
       const baseRate = predictionParams.disease === 'COVID-19' 
-        ? Math.random() * 2 + 1 // 1-3% pour COVID
-        : Math.random() * 1.5 + 0.5; // 0.5-2% pour MPOX
+        ? (Math.random() * 0.15 + 0.05) * pandemicFactor // Adjusted by date
+        : (Math.random() * 0.08 + 0.02) * pandemicFactor;
         
-      const ageMultiplier = predictionParams.ageGroup === '80+' ? 3 : 
-                           predictionParams.ageGroup === '60-79' ? 2 : 
-                           predictionParams.ageGroup === '40-59' ? 1.5 : 1;
+      // Multiplicateur d'âge basé sur les vraies données
+      const ageMultiplier = predictionParams.ageGroup === '80+' ? 15.0 : 
+                           predictionParams.ageGroup === '60-79' ? 8.0 : 
+                           predictionParams.ageGroup === '40-59' ? 3.0 : 
+                           predictionParams.ageGroup === '20-39' ? 1.0 : 0.1;
                            
-      const riskMultiplier = 1 + (predictionParams.riskFactors.length * 0.4);
-      const healthcareMultiplier = predictionParams.healthcareCapacity === 'low' ? 1.5 :
-                                   predictionParams.healthcareCapacity === 'medium' ? 1 : 0.7;
+      // Multiplicateur de facteurs de risque (plus réaliste)
+      const riskMultiplier = 1 + (predictionParams.riskFactors.length * 0.8);
+      
+      // Multiplicateur de capacité sanitaire
+      const healthcareMultiplier = predictionParams.healthcareCapacity === 'low' ? 2.5 :
+                                   predictionParams.healthcareCapacity === 'medium' ? 1.2 : 0.8;
+      
+      // Multiplicateur de vaccination (plus réaliste)
       const vaccinationMultiplier = predictionParams.disease === 'COVID-19' 
-        ? 1 - (predictionParams.vaccinationRate / 200)
-        : 1 - (predictionParams.vaccinationRate / 300); // MPOX vaccination moins répandue
+        ? 1 - (predictionParams.vaccinationRate / 150) // Réduction de 0-67%
+        : 1 - (predictionParams.vaccinationRate / 200); // MPOX vaccination moins efficace
 
       const predictedRate = baseRate * ageMultiplier * riskMultiplier * 
                            healthcareMultiplier * vaccinationMultiplier;
 
       setPredictionResult({
-        mortalityRate: Math.max(0.1, predictedRate).toFixed(2),
-        confidence: Math.floor(Math.random() * 20 + 75), // 75-95%
-        riskLevel: predictedRate > 3 ? 'Élevé' : predictedRate > 2 ? 'Modéré' : 'Faible',
-        estimatedDeaths: Math.floor(predictedRate * 10000),
+        mortalityRate: Math.max(0.001, predictedRate).toFixed(4),
+        confidence: Math.floor(Math.random() * 15 + 80), // 80-95%
+        riskLevel: predictedRate > 0.1 ? 'Très élevé' : 
+                   predictedRate > 0.05 ? 'Élevé' : 
+                   predictedRate > 0.02 ? 'Modéré' : 'Faible',
+        estimatedDeaths: Math.floor(predictedRate * 100000),
         diseaseSpecific: {
-          incidence_7j: Math.floor(Math.random() * 50 + 10),
-          cases_per_100k: Math.floor(Math.random() * 200 + 50),
-          growth_rate: (Math.random() * 0.4 - 0.2).toFixed(3)
+          incidence_7j: Math.floor(Math.random() * 200 + 50),
+          cases_per_100k: Math.floor(Math.random() * 500 + 100),
+          growth_rate: (Math.random() * 0.3 - 0.15).toFixed(3),
+          hospitalization_rate: predictionParams.disease === 'COVID-19' ? 
+            (Math.random() * 0.05 + 0.02).toFixed(3) : 
+            (Math.random() * 0.02 + 0.005).toFixed(3)
         },
         factors: {
-          age: ageMultiplier > 1 ? 'Facteur aggravant' : 'Facteur neutre',
-          riskFactors: predictionParams.riskFactors.length > 0 ? 'Facteur aggravant' : 'Aucun',
-          healthcare: predictionParams.healthcareCapacity === 'high' ? 'Facteur protecteur' : 
-                     predictionParams.healthcareCapacity === 'low' ? 'Facteur aggravant' : 'Neutre',
-          vaccination: predictionParams.vaccinationRate > 70 ? 'Facteur protecteur' : 'Facteur aggravant'
+          ageImpact: ageMultiplier.toFixed(1),
+          riskImpact: riskMultiplier.toFixed(1),
+          healthcareImpact: healthcareMultiplier.toFixed(1),
+          vaccinationImpact: vaccinationMultiplier.toFixed(2)
+        },
+        recommendations: [
+          predictionParams.ageGroup === '80+' ? 'Vaccination prioritaire et isolement strict recommandé' : '',
+          predictionParams.riskFactors.length > 0 ? 'Surveillance médicale renforcée nécessaire' : '',
+          predictionParams.healthcareCapacity === 'low' ? 'Amélioration de l\'accès aux soins critique' : '',
+          predictionParams.vaccinationRate < 50 ? 'Campagne de vaccination urgente recommandée' : ''
+        ].filter(rec => rec !== ''),
+        historicalComparison: {
+          previousWave: (predictedRate * 0.8).toFixed(4),
+          seasonalVariation: (predictedRate * (0.8 + Math.random() * 0.4)).toFixed(4),
+          variantImpact: predictionParams.disease === 'COVID-19' ? 
+            (predictedRate * (1.2 + Math.random() * 0.3)).toFixed(4) : 
+            (predictedRate * (1.1 + Math.random() * 0.2)).toFixed(4)
         }
       });
+      
       setIsLoading(false);
     }, 2000);
   };
@@ -360,6 +408,20 @@ const MortalityPrediction = () => {
                   <span>90j</span>
                 </div>
               </div>
+
+              {/* Date Selection */}
+              <div className="form-group">
+                <label htmlFor="date">Date de simulation</label>
+                <input
+                  type="date"
+                  id="date"
+                  name="date"
+                  value={predictionParams.date}
+                  onChange={e => handleInputChange('date', e.target.value)}
+                  className="form-input"
+                  required
+                />
+              </div>
             </div>
 
             {/* Risk Factors */}
@@ -403,7 +465,7 @@ const MortalityPrediction = () => {
           {predictionResult && (
             <div className="results-card">
               <h3 className="results-title">
-                
+                <span className="disease-badge">{predictionParams.disease}</span>
                 Résultats de Prédiction - {predictionParams.disease}
               </h3>
 
@@ -437,6 +499,11 @@ const MortalityPrediction = () => {
                   <div className="result-label">Taux de Croissance</div>
                   <div className="result-value">{predictionResult.diseaseSpecific.growth_rate}</div>
                 </div>
+
+                <div className="result-item info">
+                  <div className="result-label">Date de simulation</div>
+                  <div className="result-value">{predictionParams.date}</div>
+                </div>
               </div>
 
               <div className="factors-analysis">
@@ -445,9 +512,9 @@ const MortalityPrediction = () => {
                   {Object.entries(predictionResult.factors).map(([factor, impact]) => (
                     <div key={factor} className="factor-item">
                       <span className="factor-name">
-                        {factor === 'age' ? 'Âge' : 
-                         factor === 'riskFactors' ? 'Facteurs de risque' :
-                         factor === 'healthcare' ? 'Système de santé' : 'Vaccination'}
+                        {factor === 'ageImpact' ? 'Âge' : 
+                         factor === 'riskImpact' ? 'Facteurs de risque' :
+                         factor === 'healthcareImpact' ? 'Système de santé' : 'Vaccination'}
                       </span>
                       <span className={`factor-impact ${impact.includes('aggravant') ? 'negative' : 
                                                         impact.includes('protecteur') ? 'positive' : 'neutral'}`}>
@@ -457,6 +524,101 @@ const MortalityPrediction = () => {
                   ))}
                 </div>
               </div>
+
+              {/* Graphiques de prédiction */}
+              <div className="charts-section">
+                <h4>Visualisation des Prédictions <span className="disease-badge">{predictionParams.disease}</span></h4>
+                
+                {/* Graphique de mortalité par âge */}
+                <div className="chart-container">
+                  <ChartComponent
+                    type="bar"
+                    title={`Mortalité Prédite par Groupe d'Âge - ${predictionParams.disease}`}
+                    height={300}
+                    data={{
+                      labels: ['0-19', '20-39', '40-59', '60-79', '80+'],
+                      datasets: [{
+                        label: 'Taux de mortalité (%)',
+                        data: [
+                          parseFloat(predictionResult.mortalityRate) * 0.05,
+                          parseFloat(predictionResult.mortalityRate) * 0.2,
+                          parseFloat(predictionResult.mortalityRate) * 0.8,
+                          parseFloat(predictionResult.mortalityRate) * 2.5,
+                          parseFloat(predictionResult.mortalityRate) * 6.0
+                        ],
+                        backgroundColor: [
+                          '#27ae60',
+                          '#2ecc71',
+                          '#f39c12',
+                          '#e67e22',
+                          '#e74c3c'
+                        ],
+                        borderColor: '#2c3e50',
+                        borderWidth: 1
+                      }]
+                    }}
+                    options={{
+                      plugins: {
+                        tooltip: {
+                          callbacks: {
+                            label: function(context) {
+                              return `Mortalité: ${context.parsed.y.toFixed(2)}%`;
+                            }
+                          }
+                        }
+                      },
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                          ticks: {
+                            callback: function(value) {
+                              return value.toFixed(2) + '%';
+                            }
+                          }
+                        }
+                      }
+                    }}
+                  />
+                </div>
+
+                {/* Graphique de facteurs de risque */}
+                <div className="chart-container">
+                  <ChartComponent
+                    type="doughnut"
+                    title={`Impact des Facteurs de Risque - ${predictionParams.disease}`}
+                    height={300}
+                    data={{
+                      labels: Object.keys(predictionResult.factors).map(factor => 
+                        factor === 'ageImpact' ? 'Âge' : 
+                        factor === 'riskImpact' ? 'Facteurs de risque' :
+                        factor === 'healthcareImpact' ? 'Système de santé' : 'Vaccination'
+                      ),
+                      datasets: [{
+                        data: [25, 30, 25, 20],
+                        backgroundColor: [
+                          '#e74c3c',
+                          '#f39c12',
+                          '#3498db',
+                          '#27ae60'
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                      }]
+                    }}
+                    options={{
+                      plugins: {
+                        tooltip: {
+                          callbacks: {
+                            label: function(context) {
+                              return `${context.label}: ${context.parsed}% d'impact`;
+                            }
+                          }
+                        }
+                      }
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -464,7 +626,7 @@ const MortalityPrediction = () => {
         {/* Analytics Section */}
         <div className="analytics-section">
           <h2 className="section-title">
-            
+            <span className="disease-badge">{predictionParams.disease}</span>
             Analyses de Mortalité - {predictionParams.disease}
           </h2>
 
@@ -472,7 +634,7 @@ const MortalityPrediction = () => {
             {/* Age Group Analysis */}
             <div className="chart-card">
               <h3 className="chart-title">
-                
+                <span className="disease-badge">{predictionParams.disease}</span>
                 Mortalité par Groupe d'Âge - {predictionParams.disease}
               </h3>
               <div className="age-mortality-chart">
@@ -501,7 +663,7 @@ const MortalityPrediction = () => {
             {/* Risk Factors Analysis */}
             <div className="chart-card">
               <h3 className="chart-title">
-               
+                <span className="disease-badge">{predictionParams.disease}</span>
                 Facteurs de Risque - {predictionParams.disease}
               </h3>
               <div className="comorbidity-chart">
@@ -570,6 +732,7 @@ const MortalityPrediction = () => {
             {/* Risk Factors Weight Analysis */}
             <div className="chart-card risk-factors-analysis">
               <h3 className="chart-title">
+                <span className="disease-badge">{predictionParams.disease}</span>
                 Poids des Facteurs de Risque - {predictionParams.disease}
               </h3>
               <div className="risk-categories">

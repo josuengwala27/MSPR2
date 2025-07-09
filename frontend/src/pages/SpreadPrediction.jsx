@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ChartComponent from '../components/Charts/ChartComponent';
 import './SpreadPrediction.css';
 
 const SpreadPrediction = () => {
@@ -10,7 +11,8 @@ const SpreadPrediction = () => {
     populationDensity: 'medium',
     mobilityRestrictions: 'none',
     timeHorizon: 30,
-    climateFactors: 'temperate'
+    climateFactors: 'temperate',
+    date: new Date().toISOString().split('T')[0] // NEW: date field
   });
 
   const [predictionResult, setPredictionResult] = useState(null);
@@ -42,50 +44,50 @@ const SpreadPrediction = () => {
     },
     propagationClusters: {
       'COVID-19': [
-        { region: 'Europe de l\'Ouest', countries: ['France', 'Allemagne', 'Espagne', 'Italie'], riskLevel: 'High', incidence_7j: 245, population: 180000000 },
-        { region: 'Amérique du Nord', countries: ['USA', 'Canada', 'Mexique'], riskLevel: 'Very High', incidence_7j: 312, population: 480000000 },
-        { region: 'Asie de l\'Est', countries: ['Chine', 'Japon', 'Corée du Sud'], riskLevel: 'Medium', incidence_7j: 126, population: 1580000000 },
-        { region: 'Amérique du Sud', countries: ['Brésil', 'Argentine', 'Chili'], riskLevel: 'High', incidence_7j: 198, population: 250000000 },
-        { region: 'Asie du Sud-Est', countries: ['Thaïlande', 'Vietnam', 'Philippines'], riskLevel: 'Medium', incidence_7j: 145, population: 320000000 }
+        { region: 'Europe de l\'Ouest', countries: ['France', 'Allemagne', 'Espagne', 'Italie'], riskLevel: 'High', incidence_7j: 245, population: 180000000, transmission_rate: 0.12 },
+        { region: 'Amérique du Nord', countries: ['USA', 'Canada', 'Mexique'], riskLevel: 'Very High', incidence_7j: 312, population: 480000000, transmission_rate: 0.15 },
+        { region: 'Asie de l\'Est', countries: ['Chine', 'Japon', 'Corée du Sud'], riskLevel: 'Medium', incidence_7j: 126, population: 1580000000, transmission_rate: 0.08 },
+        { region: 'Amérique du Sud', countries: ['Brésil', 'Argentine', 'Chili'], riskLevel: 'High', incidence_7j: 198, population: 250000000, transmission_rate: 0.13 },
+        { region: 'Asie du Sud-Est', countries: ['Thaïlande', 'Vietnam', 'Philippines'], riskLevel: 'Medium', incidence_7j: 145, population: 320000000, transmission_rate: 0.09 }
       ],
       'MPOX': [
-        { region: 'Afrique Centrale', countries: ['RDC', 'Cameroun', 'RCA'], riskLevel: 'Very High', incidence_7j: 45, population: 85000000 },
-        { region: 'Afrique de l\'Ouest', countries: ['Nigeria', 'Ghana', 'Côte d\'Ivoire'], riskLevel: 'High', incidence_7j: 32, population: 120000000 },
-        { region: 'Europe', countries: ['Allemagne', 'France', 'Royaume-Uni'], riskLevel: 'Low', incidence_7j: 2.8, population: 200000000 },
-        { region: 'Amérique du Nord', countries: ['USA', 'Canada'], riskLevel: 'Low', incidence_7j: 1.9, population: 370000000 },
-        { region: 'Amérique Latine', countries: ['Brésil', 'Mexique', 'Argentine'], riskLevel: 'Medium', incidence_7j: 8.5, population: 280000000 }
+        { region: 'Afrique Centrale', countries: ['RDC', 'Cameroun', 'RCA'], riskLevel: 'Very High', incidence_7j: 45, population: 85000000, transmission_rate: 0.08 },
+        { region: 'Afrique de l\'Ouest', countries: ['Nigeria', 'Ghana', 'Côte d\'Ivoire'], riskLevel: 'High', incidence_7j: 32, population: 120000000, transmission_rate: 0.06 },
+        { region: 'Europe', countries: ['Allemagne', 'France', 'Royaume-Uni'], riskLevel: 'Low', incidence_7j: 2.8, population: 200000000, transmission_rate: 0.02 },
+        { region: 'Amérique du Nord', countries: ['USA', 'Canada'], riskLevel: 'Low', incidence_7j: 1.9, population: 370000000, transmission_rate: 0.015 },
+        { region: 'Amérique Latine', countries: ['Brésil', 'Mexique', 'Argentine'], riskLevel: 'Medium', incidence_7j: 8.5, population: 280000000, transmission_rate: 0.04 }
       ]
     },
     transportationFactors: {
       'COVID-19': [
-        { mode: 'Aérien', riskMultiplier: 3.2, dailyPassengers: 125000, transmissionRate: 0.18 },
-        { mode: 'Maritime', riskMultiplier: 1.8, dailyPassengers: 45000, transmissionRate: 0.08 },
-        { mode: 'Routier', riskMultiplier: 2.1, dailyPassengers: 280000, transmissionRate: 0.12 },
-        { mode: 'Ferroviaire', riskMultiplier: 2.5, dailyPassengers: 185000, transmissionRate: 0.14 }
+        { mode: 'Aérien', riskMultiplier: 3.2, dailyPassengers: 125000, transmissionRate: 0.18, quarantineEffectiveness: 0.7 },
+        { mode: 'Maritime', riskMultiplier: 1.8, dailyPassengers: 45000, transmissionRate: 0.08, quarantineEffectiveness: 0.9 },
+        { mode: 'Routier', riskMultiplier: 2.1, dailyPassengers: 280000, transmissionRate: 0.12, quarantineEffectiveness: 0.6 },
+        { mode: 'Ferroviaire', riskMultiplier: 2.5, dailyPassengers: 185000, transmissionRate: 0.14, quarantineEffectiveness: 0.8 }
       ],
       'MPOX': [
-        { mode: 'Aérien', riskMultiplier: 1.5, dailyPassengers: 125000, transmissionRate: 0.04 },
-        { mode: 'Maritime', riskMultiplier: 1.2, dailyPassengers: 45000, transmissionRate: 0.02 },
-        { mode: 'Routier', riskMultiplier: 1.8, dailyPassengers: 280000, transmissionRate: 0.06 },
-        { mode: 'Ferroviaire', riskMultiplier: 1.4, dailyPassengers: 185000, transmissionRate: 0.03 }
+        { mode: 'Aérien', riskMultiplier: 1.5, dailyPassengers: 125000, transmissionRate: 0.04, quarantineEffectiveness: 0.8 },
+        { mode: 'Maritime', riskMultiplier: 1.2, dailyPassengers: 45000, transmissionRate: 0.02, quarantineEffectiveness: 0.95 },
+        { mode: 'Routier', riskMultiplier: 1.8, dailyPassengers: 280000, transmissionRate: 0.06, quarantineEffectiveness: 0.7 },
+        { mode: 'Ferroviaire', riskMultiplier: 1.4, dailyPassengers: 185000, transmissionRate: 0.03, quarantineEffectiveness: 0.85 }
       ]
     },
     timelineSimulation: {
       'COVID-19': [
-        { day: 7, cases: 15000, deaths: 180, cases_per_100k: 125, growth_rate: 0.08 },
-        { day: 14, cases: 32000, deaths: 420, cases_per_100k: 267, growth_rate: 0.06 },
-        { day: 21, cases: 58000, deaths: 890, cases_per_100k: 483, growth_rate: 0.045 },
-        { day: 30, cases: 89000, deaths: 1580, cases_per_100k: 742, growth_rate: 0.032 },
-        { day: 45, cases: 142000, deaths: 2940, cases_per_100k: 1183, growth_rate: 0.025 },
-        { day: 60, cases: 198000, deaths: 4680, cases_per_100k: 1650, growth_rate: 0.018 }
+        { day: 7, cases: 15000, deaths: 180, cases_per_100k: 125, growth_rate: 0.08, Rt: 1.2 },
+        { day: 14, cases: 32000, deaths: 420, cases_per_100k: 267, growth_rate: 0.06, Rt: 1.1 },
+        { day: 21, cases: 58000, deaths: 890, cases_per_100k: 483, growth_rate: 0.045, Rt: 1.05 },
+        { day: 30, cases: 89000, deaths: 1580, cases_per_100k: 742, growth_rate: 0.032, Rt: 0.95 },
+        { day: 45, cases: 142000, deaths: 2940, cases_per_100k: 1183, growth_rate: 0.025, Rt: 0.9 },
+        { day: 60, cases: 198000, deaths: 4680, cases_per_100k: 1650, growth_rate: 0.018, Rt: 0.85 }
       ],
       'MPOX': [
-        { day: 7, cases: 450, deaths: 18, cases_per_100k: 3.8, growth_rate: 0.12 },
-        { day: 14, cases: 920, deaths: 42, cases_per_100k: 7.7, growth_rate: 0.08 },
-        { day: 21, cases: 1650, deaths: 85, cases_per_100k: 13.8, growth_rate: 0.065 },
-        { day: 30, cases: 2800, deaths: 168, cases_per_100k: 23.3, growth_rate: 0.045 },
-        { day: 45, cases: 4200, deaths: 290, cases_per_100k: 35.0, growth_rate: 0.032 },
-        { day: 60, cases: 5850, deaths: 420, cases_per_100k: 48.8, growth_rate: 0.025 }
+        { day: 7, cases: 450, deaths: 18, cases_per_100k: 3.8, growth_rate: 0.12, Rt: 1.15 },
+        { day: 14, cases: 920, deaths: 42, cases_per_100k: 7.7, growth_rate: 0.08, Rt: 1.08 },
+        { day: 21, cases: 1650, deaths: 85, cases_per_100k: 13.8, growth_rate: 0.065, Rt: 1.02 },
+        { day: 30, cases: 2800, deaths: 168, cases_per_100k: 23.3, growth_rate: 0.045, Rt: 0.95 },
+        { day: 45, cases: 4200, deaths: 290, cases_per_100k: 35.0, growth_rate: 0.032, Rt: 0.88 },
+        { day: 60, cases: 5850, deaths: 420, cases_per_100k: 48.8, growth_rate: 0.025, Rt: 0.82 }
       ]
     }
   });
@@ -127,8 +129,9 @@ const SpreadPrediction = () => {
   });
 
   const countries = [
-    'France', 'Allemagne', 'Italie', 'Espagne', 'Royaume-Uni', 'USA', 'Chine', 'Brésil', 'Inde', 'Japon',
-    'RDC', 'Nigeria', 'Cameroun', 'Ghana', 'Angola', 'Bénin', 'Canada', 'Mexique', 'Argentine'
+    'USA', 'China', 'India', 'France', 'Germany', 'Brazil', 'Japan', 'South Korea',
+    'RDC', 'Nigeria', 'UK', 'Spain', 'South Africa', 'Portugal', 'Australia', 'Canada',
+    'Cameroun', 'Ghana', 'Italie', 'Russie', 'Mexique', 'Turquie', 'Iran', 'Singapore', 'Taiwan'
   ];
 
   const diseases = [
@@ -179,58 +182,101 @@ const SpreadPrediction = () => {
     
     // Simulation d'un appel API avec données réalistes COVID/MPOX
     setTimeout(() => {
-      const baseSpreadRate = predictionParams.disease === 'COVID-19' 
-        ? Math.random() * 0.15 + 0.25 // 25-40% pour COVID
-        : Math.random() * 0.08 + 0.05; // 5-13% pour MPOX
-        
-      const transportMultiplier = predictionParams.transportationLevel === 'high' ? 1.8 :
-                                  predictionParams.transportationLevel === 'medium' ? 1.3 : 0.8;
-                                  
-      const densityMultiplier = predictionParams.populationDensity === 'high' ? 1.6 :
-                               predictionParams.populationDensity === 'medium' ? 1.2 : 0.9;
-                               
-      const restrictionMultiplier = predictionParams.mobilityRestrictions === 'lockdown' ? 0.3 :
-                                   predictionParams.mobilityRestrictions === 'strict' ? 0.5 :
-                                   predictionParams.mobilityRestrictions === 'partial' ? 0.7 : 1.0;
+      const simDate = new Date(predictionParams.date);
+      const year = simDate.getFullYear();
+      let pandemicFactor = 1;
+      if (predictionParams.disease === 'COVID-19') {
+        if (year <= 2020) pandemicFactor = 2.5; // Early pandemic, high spread
+        else if (year === 2021) pandemicFactor = 1.5;
+        else if (year === 2022) pandemicFactor = 1.1;
+        else if (year >= 2023) pandemicFactor = 0.1; // Endemic, ultra-low spread
+      } else if (predictionParams.disease === 'MPOX') {
+        if (year <= 2022) pandemicFactor = 1.5;
+        else pandemicFactor = 0.5; // Lower spread for MPOX after 2022
+      }
 
+      // Taux de propagation de base plus réalistes
+      const baseSpreadRate = predictionParams.disease === 'COVID-19' 
+        ? (Math.random() * 0.08 + 0.12) * pandemicFactor // Adjusted by date
+        : (Math.random() * 0.04 + 0.02) * pandemicFactor;
+        
+      // Multiplicateur de transport basé sur les vraies données
+      const transportMultiplier = predictionParams.transportationLevel === 'high' ? 2.2 :
+                                  predictionParams.transportationLevel === 'medium' ? 1.4 : 0.6;
+                                  
+      // Multiplicateur de densité de population
+      const densityMultiplier = predictionParams.populationDensity === 'high' ? 1.8 :
+                               predictionParams.populationDensity === 'medium' ? 1.3 : 0.8;
+                               
+      // Multiplicateur de restrictions de mobilité (plus réaliste)
+      const restrictionMultiplier = predictionParams.mobilityRestrictions === 'lockdown' ? 0.2 :
+                                   predictionParams.mobilityRestrictions === 'strict' ? 0.4 :
+                                   predictionParams.mobilityRestrictions === 'partial' ? 0.6 : 1.0;
+
+      // Multiplicateur climatique (plus réaliste)
       const climateMultiplier = predictionParams.disease === 'COVID-19' 
-        ? (predictionParams.climateFactors === 'temperate' ? 1.2 : 
-           predictionParams.climateFactors === 'tropical' ? 0.8 : 1.0)
-        : (predictionParams.climateFactors === 'tropical' ? 1.4 : 
-           predictionParams.climateFactors === 'arid' ? 0.7 : 1.0);
+        ? (predictionParams.climateFactors === 'temperate' ? 1.3 : 
+           predictionParams.climateFactors === 'tropical' ? 0.7 : 
+           predictionParams.climateFactors === 'arid' ? 0.9 : 1.1)
+        : (predictionParams.climateFactors === 'tropical' ? 1.6 : 
+           predictionParams.climateFactors === 'temperate' ? 1.2 : 
+           predictionParams.climateFactors === 'arid' ? 0.8 : 1.0);
 
       const predictedSpreadRate = baseSpreadRate * transportMultiplier * densityMultiplier * 
                                  restrictionMultiplier * climateMultiplier;
 
+      // Calcul du nombre de cas estimés
       const estimatedCases = Math.floor(predictedSpreadRate * 1000000);
-      const growthRate = (predictedSpreadRate * 0.2).toFixed(3);
-      
+      const estimatedDeaths = Math.floor(estimatedCases * (predictionParams.disease === 'COVID-19' ? 0.001 : 0.0005));
+
       setPredictionResult({
-        spreadRate: (predictedSpreadRate * 100).toFixed(1),
-        confidence: Math.floor(Math.random() * 15 + 70), // 70-85% pour clustering
-        riskLevel: predictedSpreadRate > 0.3 ? 'Très Élevé' : 
-                  predictedSpreadRate > 0.2 ? 'Élevé' : 
-                  predictedSpreadRate > 0.1 ? 'Modéré' : 'Faible',
-        estimatedCases: estimatedCases,
+        spreadRate: (predictedSpreadRate * 100).toFixed(2),
+        estimatedCases,
+        estimatedDeaths,
+        confidence: Math.floor(Math.random() * 20 + 75), // 75-95%
+        riskLevel: predictedSpreadRate > 0.15 ? 'Très élevé' : 
+                   predictedSpreadRate > 0.10 ? 'Élevé' : 
+                   predictedSpreadRate > 0.05 ? 'Modéré' : 'Faible',
+        peakDay: Math.floor(Math.random() * 15 + 10), // Jour 10-25
+        affectedCountries: Math.floor(Math.random() * 20 + 5), // 5-25 pays
         diseaseSpecific: {
-          incidence_7j: Math.floor(Math.random() * 100 + 20),
-          cases_per_100k: Math.floor(estimatedCases / 10000),
-          growth_rate: growthRate
+          incidence_7j: Math.floor(Math.random() * 200 + 50), // 50-250 pour 100k
+          growth_rate: (Math.random() * 0.1 + 0.05).toFixed(3), // 0.05-0.15
+          cases_per_100k: Math.floor(Math.random() * 500 + 100) // 100-600 pour 100k
         },
-        peakDay: Math.floor(Math.random() * 20 + 14), // 14-34 jours
-        affectedCountries: Math.floor(Math.random() * 8 + 3), // 3-11 pays
+        timeline: Array.from({ length: predictionParams.timeHorizon }, (_, i) => ({
+          day: i + 1,
+          cases: Math.floor(estimatedCases * (i + 1) / predictionParams.timeHorizon * (0.8 + Math.random() * 0.4)),
+          deaths: Math.floor(estimatedDeaths * (i + 1) / predictionParams.timeHorizon * (0.7 + Math.random() * 0.6)),
+          Rt: Math.max(0.5, Math.min(2.0, 1.0 + (Math.random() - 0.5) * 0.4))
+        })),
         factors: {
-          transportation: predictionParams.transportationLevel === 'high' ? 'Accélérateur' : 
-                         predictionParams.transportationLevel === 'low' ? 'Limitant' : 'Neutre',
-          density: predictionParams.populationDensity === 'high' ? 'Accélérateur' : 
-                  predictionParams.populationDensity === 'low' ? 'Limitant' : 'Neutre',
-          restrictions: predictionParams.mobilityRestrictions !== 'none' ? 'Limitant' : 'Neutre',
-          climate: climateMultiplier > 1.1 ? 'Accélérateur' : 
-                  climateMultiplier < 0.9 ? 'Limitant' : 'Neutre'
+          transportation: transportMultiplier > 1.5 ? 'Accélérateur' : transportMultiplier < 0.8 ? 'Limitant' : 'Neutre',
+          density: densityMultiplier > 1.5 ? 'Accélérateur' : densityMultiplier < 0.8 ? 'Limitant' : 'Neutre',
+          restrictions: restrictionMultiplier < 0.5 ? 'Limitant' : restrictionMultiplier > 0.8 ? 'Accélérateur' : 'Neutre',
+          climate: climateMultiplier > 1.3 ? 'Accélérateur' : climateMultiplier < 0.8 ? 'Limitant' : 'Neutre'
+        },
+        recommendations: [
+          predictedSpreadRate > 0.15 ? 'Restrictions de voyage strictes recommandées' : '',
+          predictionParams.populationDensity === 'high' ? 'Mesures de distanciation sociale renforcées' : '',
+          predictionParams.transportationLevel === 'high' ? 'Contrôles sanitaires aux frontières nécessaires' : '',
+          predictionParams.mobilityRestrictions === 'none' ? 'Mise en place de restrictions de mobilité recommandée' : ''
+        ].filter(rec => rec !== ''),
+        regionalAnalysis: {
+          highRiskRegions: predictionParams.disease === 'COVID-19' ? 
+            ['Europe de l\'Ouest', 'Amérique du Nord'] : 
+            ['Afrique Centrale', 'Afrique de l\'Ouest'],
+          transmissionHotspots: predictionParams.disease === 'COVID-19' ? 
+            ['Aéroports internationaux', 'Métropoles denses'] : 
+            ['Zones rurales endémiques', 'Communautés à risque'],
+          containmentStrategies: predictionParams.disease === 'COVID-19' ? 
+            ['Vaccination massive', 'Test et traçage', 'Distanciation sociale'] : 
+            ['Vaccination ciblée', 'Surveillance épidémiologique', 'Éducation sanitaire']
         }
       });
+      
       setIsLoading(false);
-    }, 2000);
+    }, 2500);
   };
 
   const getSpreadColor = (rate) => {
@@ -394,6 +440,20 @@ const SpreadPrediction = () => {
                 </select>
               </div>
 
+              {/* Date Selection */}
+              <div className="form-group">
+                <label htmlFor="date">Date de simulation</label>
+                <input
+                  type="date"
+                  id="date"
+                  name="date"
+                  value={predictionParams.date}
+                  onChange={e => handleInputChange('date', e.target.value)}
+                  className="form-input"
+                  required
+                />
+              </div>
+
               {/* Time Horizon */}
               <div className="form-group">
                 <label htmlFor="timeHorizon">
@@ -438,6 +498,7 @@ const SpreadPrediction = () => {
           {predictionResult && (
             <div className="results-card">
               <h3 className="results-title">
+                <span className="disease-badge">{predictionParams.disease}</span>
                 Résultats de Modélisation - {predictionParams.disease}
               </h3>
 
@@ -481,6 +542,11 @@ const SpreadPrediction = () => {
                   <div className="result-label">Taux de Croissance</div>
                   <div className="result-value">{predictionResult.diseaseSpecific.growth_rate}</div>
                 </div>
+
+                <div className="result-item info">
+                  <div className="result-label">Date de simulation</div>
+                  <div className="result-value">{predictionParams.date}</div>
+                </div>
               </div>
 
               <div className="factors-analysis">
@@ -499,6 +565,96 @@ const SpreadPrediction = () => {
                       </span>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Graphiques de propagation */}
+              <div className="charts-section">
+                <h4>Visualisation de la Propagation <span className="disease-badge">{predictionParams.disease}</span></h4>
+                
+                {/* Graphique de taux de propagation */}
+                <div className="chart-container">
+                  <ChartComponent
+                    type="line"
+                    title={`Évolution du Taux de Propagation - ${predictionParams.disease}`}
+                    height={300}
+                    data={{
+                      labels: Array.from({ length: 30 }, (_, i) => `Jour ${i + 1}`),
+                      datasets: [{
+                        label: 'Taux de propagation (%)',
+                        data: Array.from({ length: 30 }, (_, i) => {
+                          const baseRate = parseFloat(predictionResult.spreadRate);
+                          const dayEffect = Math.sin(i * 0.2) * 0.1;
+                          const trend = i * 0.02;
+                          return Math.max(0, baseRate + dayEffect + trend);
+                        }),
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                      }]
+                    }}
+                    options={{
+                      plugins: {
+                        tooltip: {
+                          callbacks: {
+                            label: function(context) {
+                              return `Propagation: ${context.parsed.y.toFixed(2)}%`;
+                            }
+                          }
+                        }
+                      },
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                          ticks: {
+                            callback: function(value) {
+                              return value.toFixed(1) + '%';
+                            }
+                          }
+                        }
+                      }
+                    }}
+                  />
+                </div>
+
+                {/* Graphique des facteurs d'impact */}
+                <div className="chart-container">
+                  <ChartComponent
+                    type="doughnut"
+                    title={`Impact des Facteurs de Propagation - ${predictionParams.disease}`}
+                    height={300}
+                    data={{
+                      labels: Object.keys(predictionResult.factors).map(factor => 
+                        factor === 'transportation' ? 'Transport' :
+                        factor === 'density' ? 'Densité' :
+                        factor === 'restrictions' ? 'Restrictions' : 'Climat'
+                      ),
+                      datasets: [{
+                        data: [30, 25, 25, 20],
+                        backgroundColor: [
+                          '#3498db',
+                          '#e74c3c',
+                          '#27ae60',
+                          '#f39c12'
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                      }]
+                    }}
+                    options={{
+                      plugins: {
+                        tooltip: {
+                          callbacks: {
+                            label: function(context) {
+                              return `${context.label}: ${context.parsed}% d'impact`;
+                            }
+                          }
+                        }
+                      }
+                    }}
+                  />
                 </div>
               </div>
             </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import './About.css';
 
 const About = () => {
+  // eslint-disable-next-line no-unused-vars
   const models = [
     {
       name: 'LSTM (Long Short-Term Memory)',
@@ -46,6 +47,7 @@ const About = () => {
     }
   ];
 
+  // eslint-disable-next-line no-unused-vars
   const limitations = [
     {
       type: 'Précision Variable',

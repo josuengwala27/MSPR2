@@ -1,60 +1,26 @@
 import React, { useState } from 'react';
+import ChartComponent from '../components/Charts/ChartComponent';
 import './Dashboard.css';
 
-const Dashboard = () => {
-  const [globalStats] = useState({
-    totalCountries: 195,
-    covidCases: '668M',
-    mpoxCases: '98.2K',
-    lastUpdate: new Date().toLocaleDateString('fr-FR'),
-    averageRt: 1.2,
-    mortalityRate: 2.3,
-    riskCountries: 12
-  });
-
-  const [recentPredictions] = useState([
-    {
-      id: 1,
-      type: 'Rt Prediction',
-      country: 'France',
-      value: 0.85,
-      trend: 'decline',
-      confidence: 68,
-      date: '2024-01-15'
-    },
-    {
-      id: 2,
-      type: 'Mortality Rate',
-      country: 'Italy',
-      value: 3.2,
-      trend: 'stable',
-      confidence: 82,
-      date: '2024-01-15'
-    },
-    {
-      id: 3,
-      type: 'Spread Prediction',
-      country: 'Spain',
-      value: 'High Risk',
-      trend: 'increase',
-      confidence: 74,
-      date: '2024-01-15'
-    }
-  ]);
-
-  // Données pour les graphiques
-  const [worldData] = useState([
-    { country: 'USA', cases: 103500000, deaths: 1120000, rt: 0.9 },
-    { country: 'China', cases: 99230000, deaths: 120000, rt: 1.1 },
-    { country: 'India', cases: 44690000, deaths: 530000, rt: 0.8 },
-    { country: 'France', cases: 38890000, deaths: 174000, rt: 0.85 },
-    { country: 'Germany', cases: 38000000, deaths: 161000, rt: 0.92 },
-    { country: 'Brazil', cases: 37100000, deaths: 688000, rt: 1.05 },
-    { country: 'Japan', cases: 33800000, deaths: 74000, rt: 0.88 },
-    { country: 'South Korea', cases: 30640000, deaths: 33000, rt: 0.76 }
-  ]);
-
-  const [timeSeriesData] = useState([
+const COVID_STATS = {
+  totalCountries: 195,
+  cases: 668_000_000,
+  deaths: 6_800_000,
+  averageRt: 1.12,
+  mortalityRate: 1.02,
+  riskCountries: 18,
+  lastUpdate: new Date().toLocaleDateString('fr-FR'),
+  topCountries: [
+    { country: 'USA', cases: 103_500_000, deaths: 1_120_000, rt: 0.9 },
+    { country: 'China', cases: 99_200_000, deaths: 120_000, rt: 1.1 },
+    { country: 'India', cases: 44_700_000, deaths: 530_000, rt: 0.8 },
+    { country: 'France', cases: 38_900_000, deaths: 174_000, rt: 0.85 },
+    { country: 'Germany', cases: 38_000_000, deaths: 161_000, rt: 0.92 },
+    { country: 'Brazil', cases: 37_100_000, deaths: 688_000, rt: 1.05 },
+    { country: 'Japan', cases: 33_800_000, deaths: 74_000, rt: 0.88 },
+    { country: 'South Korea', cases: 30_640_000, deaths: 33_000, rt: 0.76 }
+  ],
+  timeSeries: [
     { date: '2024-01-01', cases: 45000, deaths: 890, rt: 1.2 },
     { date: '2024-01-02', cases: 42000, deaths: 870, rt: 1.15 },
     { date: '2024-01-03', cases: 39000, deaths: 850, rt: 1.1 },
@@ -62,46 +28,116 @@ const Dashboard = () => {
     { date: '2024-01-05', cases: 34000, deaths: 800, rt: 1.0 },
     { date: '2024-01-06', cases: 32000, deaths: 780, rt: 0.95 },
     { date: '2024-01-07', cases: 30000, deaths: 760, rt: 0.9 }
-  ]);
-
-  const [riskAnalysis] = useState({
+  ],
+  riskMap: [
+    { region: 'Amérique du Sud', risk: 'Élevé' },
+    { region: 'Amérique du Nord', risk: 'Modéré' },
+    { region: 'Europe', risk: 'Faible' },
+    { region: 'Océanie', risk: 'Très Faible' }
+  ],
+  riskAnalysis: {
     highRisk: ['Brazil', 'India', 'Russia', 'Mexico'],
     mediumRisk: ['USA', 'China', 'Turkey', 'Iran'],
     lowRisk: ['France', 'Germany', 'Japan', 'South Korea'],
     veryLowRisk: ['New Zealand', 'Australia', 'Singapore', 'Taiwan']
-  });
+  },
+  recentPredictions: [
+    { id: 1, type: 'Rt Prediction', country: 'France', value: 0.85, trend: 'decline', confidence: 68, date: '2024-01-15' },
+    { id: 2, type: 'Mortality Rate', country: 'Italy', value: 1.1, trend: 'stable', confidence: 82, date: '2024-01-15' },
+    { id: 3, type: 'Spread Prediction', country: 'Spain', value: 'High Risk', trend: 'increase', confidence: 74, date: '2024-01-15' }
+  ],
+  alerts: [
+    { level: 'high', text: 'Rt élevé détecté au Brésil', time: 'Il y a 5 min' },
+    { level: 'medium', text: 'Augmentation des cas en Inde', time: 'Il y a 12 min' },
+    { level: 'low', text: 'Amélioration en France', time: 'Il y a 18 min' }
+  ]
+};
 
-  const getTrendIcon = (trend) => {
-    switch (trend) {
-      case 'increase': return '📈';
-      case 'decline': return '📉';
-      case 'stable': return '➡️';
-      default: return '📊';
-    }
-  };
+const MPOX_STATS = {
+  totalCountries: 110,
+  cases: 98_200,
+  deaths: 1_200,
+  averageRt: 1.05,
+  mortalityRate: 1.22,
+  riskCountries: 12,
+  lastUpdate: new Date().toLocaleDateString('fr-FR'),
+  topCountries: [
+    { country: 'RDC', cases: 32_000, deaths: 800, rt: 1.2 },
+    { country: 'Nigeria', cases: 18_000, deaths: 200, rt: 1.1 },
+    { country: 'USA', cases: 12_000, deaths: 50, rt: 0.95 },
+    { country: 'UK', cases: 7_500, deaths: 20, rt: 0.9 },
+    { country: 'Spain', cases: 6_800, deaths: 15, rt: 0.88 },
+    { country: 'Brazil', cases: 5_900, deaths: 30, rt: 1.05 },
+    { country: 'France', cases: 5_200, deaths: 10, rt: 0.92 },
+    { country: 'Germany', cases: 4_800, deaths: 8, rt: 0.91 }
+  ],
+  timeSeries: [
+    { date: '2024-01-01', cases: 120, deaths: 2, rt: 1.1 },
+    { date: '2024-01-02', cases: 110, deaths: 1, rt: 1.08 },
+    { date: '2024-01-03', cases: 105, deaths: 1, rt: 1.06 },
+    { date: '2024-01-04', cases: 98, deaths: 1, rt: 1.04 },
+    { date: '2024-01-05', cases: 90, deaths: 0, rt: 1.01 },
+    { date: '2024-01-06', cases: 85, deaths: 0, rt: 0.98 },
+    { date: '2024-01-07', cases: 80, deaths: 0, rt: 0.95 }
+  ],
+  riskMap: [
+    { region: 'Afrique Centrale', risk: 'Élevé' },
+    { region: 'Afrique de l\'Ouest', risk: 'Modéré' },
+    { region: 'Europe', risk: 'Faible' },
+    { region: 'Amérique du Nord', risk: 'Très Faible' }
+  ],
+  riskAnalysis: {
+    highRisk: ['RDC', 'Nigeria', 'Cameroun', 'Ghana'],
+    mediumRisk: ['USA', 'UK', 'Brésil', 'Espagne'],
+    lowRisk: ['France', 'Allemagne', 'Italie', 'Portugal'],
+    veryLowRisk: ['Canada', 'Australie', 'Japon', 'Corée du Sud']
+  },
+  recentPredictions: [
+    { id: 1, type: 'Rt Prediction', country: 'RDC', value: 1.2, trend: 'increase', confidence: 62, date: '2024-01-15' },
+    { id: 2, type: 'Mortality Rate', country: 'Nigeria', value: 2.1, trend: 'stable', confidence: 78, date: '2024-01-15' },
+    { id: 3, type: 'Spread Prediction', country: 'USA', value: 'Medium Risk', trend: 'decline', confidence: 70, date: '2024-01-15' }
+  ],
+  alerts: [
+    { level: 'high', text: 'Propagation rapide détectée en RDC', time: 'Il y a 3 min' },
+    { level: 'medium', text: 'Nouveaux cas au Nigeria', time: 'Il y a 10 min' },
+    { level: 'low', text: 'Situation stable en France', time: 'Il y a 20 min' }
+  ]
+};
 
-  const getTrendColor = (trend) => {
-    switch (trend) {
-      case 'increase': return '#e74c3c';
-      case 'decline': return '#27ae60';
-      case 'stable': return '#f39c12';
-      default: return '#3498db';
-    }
-  };
+const DISEASES = [
+  { key: 'covid', label: 'COVID-19', color: '#3498db', icon: '🦠' },
+  { key: 'mpox', label: 'MPOX', color: '#27ae60', icon: '🧬' }
+];
 
+const countryFlags = {
+  USA: '🇺🇸', China: '🇨🇳', India: '🇮🇳', France: '🇫🇷', Germany: '🇩🇪', Brazil: '🇧🇷', Japan: '🇯🇵', 'South Korea': '🇰🇷',
+  RDC: '🇨🇩', Nigeria: '🇳🇬', UK: '🇬🇧', Spain: '🇪🇸', 'South Africa': '🇿🇦', Portugal: '🇵🇹', Australia: '🇦🇺', Canada: '🇨🇦',
+  Cameroun: '🇨🇲', Ghana: '🇬🇭', Italie: '🇮🇹', Russie: '🇷🇺', Mexique: '🇲🇽', Turquie: '🇹🇷', Iran: '🇮🇷', Singapore: '🇸🇬', Taiwan: '🇹🇼', Australie: '🇦🇺', Japon: '🇯🇵', Corée: '🇰🇷'
+};
+
+const diseasePeriods = {
+  covid: { label: 'Période : 2020–2024 (pandémie COVID-19)' },
+  mpox: { label: 'Période : 2022–2024 (épidémie MPOX)' }
+};
+
+const Dashboard = () => {
+  const [selectedDisease, setSelectedDisease] = useState('covid');
+  const stats = selectedDisease === 'covid' ? COVID_STATS : MPOX_STATS;
+  const diseaseMeta = DISEASES.find(d => d.key === selectedDisease);
+  const [timeSeriesType, setTimeSeriesType] = useState('cases');
+
+  // Fonctions utilitaires (inchangées)
   const formatNumber = (num) => {
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + 'M';
+    if (num >= 1_000) return (num / 1_000).toFixed(1) + 'K';
     return num.toString();
   };
-
   const getRtColor = (rt) => {
     if (rt < 0.8) return '#27ae60';
     if (rt < 1.0) return '#2ecc71';
     if (rt < 1.2) return '#f39c12';
     return '#e74c3c';
   };
-
   const getRiskColor = (level) => {
     switch (level) {
       case 'high': return '#e74c3c';
@@ -111,68 +147,133 @@ const Dashboard = () => {
       default: return '#6c757d';
     }
   };
+  const getTrendIcon = (trend) => {
+    switch (trend) {
+      case 'increase': return '📈';
+      case 'decline': return '📉';
+      case 'stable': return '➡️';
+      default: return '📊';
+    }
+  };
+  const getTrendColor = (trend) => {
+    switch (trend) {
+      case 'increase': return '#e74c3c';
+      case 'decline': return '#27ae60';
+      case 'stable': return '#f39c12';
+      default: return '#3498db';
+    }
+  };
+
+  // Générer les données annuelles pour le graphique
+  const getYearlyData = (disease, type) => {
+    if (disease === 'covid') {
+      // 5 années distinctes pour COVID-19
+      return {
+        labels: ['2020', '2021', '2022', '2023', '2024'],
+        datasets: [{
+          label: type === 'cases' ? 'Cas COVID-19' : 'Décès COVID-19',
+          data: type === 'cases'
+            ? [85000000, 220000000, 250000000, 70000000, 43000000]
+            : [1800000, 3400000, 1200000, 350000, 50000],
+          backgroundColor: '#3498db99',
+          borderColor: '#3498db',
+          borderWidth: 2,
+          borderRadius: 8,
+        }]
+      };
+    } else {
+      // MPOX : 2 années
+      return {
+        labels: ['2022', '2023/2024'],
+        datasets: [{
+          label: type === 'cases' ? 'Cas MPOX' : 'Décès MPOX',
+          data: type === 'cases' ? [65000, 33200] : [800, 400],
+          backgroundColor: '#27ae6099',
+          borderColor: '#27ae60',
+          borderWidth: 2,
+          borderRadius: 8,
+        }]
+      };
+    }
+  };
+
+  // Préparation des données pour ChartComponent
+  const chartLabels = stats.timeSeries.map(d => d.date.slice(5));
+
+  const riskClassMap = {
+    'Élevé': 'high-risk',
+    'Modéré': 'medium-risk',
+    'Faible': 'low-risk',
+    'Très Faible': 'very-low-risk'
+  };
 
   return (
     <div className="dashboard">
+      {/* Sélecteur de maladie global */}
+      <div className="disease-selector" role="radiogroup" aria-label="Sélection de la maladie">
+        {DISEASES.map(d => (
+          <button
+            key={d.key}
+            className={`disease-btn${selectedDisease === d.key ? ' selected' : ''}`}
+            style={{ borderColor: d.color, color: d.color }}
+            data-disease={d.key}
+            aria-pressed={selectedDisease === d.key}
+            aria-label={d.label}
+            onClick={() => setSelectedDisease(d.key)}
+          >
+            <span className="disease-icon" aria-hidden="true">{d.icon}</span> {d.label}
+          </button>
+        ))}
+      </div>
+
       {/* Header Section */}
       <div className="dashboard-header">
         <div className="header-content">
           <h1 className="dashboard-title">
-            <span className="title-icon">🦠</span>
-            Tableau de Bord - COVID-19 & MPOX
+            <span className="title-icon">{diseaseMeta.icon}</span>
+            Tableau de Bord – {diseaseMeta.label}
           </h1>
           <p className="dashboard-subtitle">
-            Surveillance et analyse en temps réel des données COVID-19 et MPOX
+            Surveillance et analyse en temps réel des données {diseaseMeta.label}
           </p>
           <div className="last-update">
             <span className="update-icon">🕐</span>
-            Dernière mise à jour : {globalStats.lastUpdate}
+            Dernière mise à jour : {stats.lastUpdate}
           </div>
         </div>
       </div>
 
       {/* Global Statistics */}
       <div className="stats-grid">
-        <div className="stat-card primary">
+        <div className="stat-card primary" title="Nombre total de pays surveillés OMS">
           <div className="stat-content">
-            <h3 className="stat-value">{globalStats.totalCountries}</h3>
+            <h3 className="stat-value">{stats.totalCountries}</h3>
             <p className="stat-label">Pays Surveillés</p>
           </div>
         </div>
-
-        <div className="stat-card danger">
-          <div className="stat-icon">🦠</div>
+        <div className="stat-card danger" title={`Nombre cumulé de cas ${diseaseMeta.label}`}>
+          <div className="stat-icon">{diseaseMeta.icon}</div>
           <div className="stat-content">
-            <h3 className="stat-value">{globalStats.covidCases}</h3>
-            <p className="stat-label">Cas COVID-19</p>
+            <h3 className="stat-value">{formatNumber(stats.cases)}</h3>
+            <p className="stat-label">Cas {diseaseMeta.label}</p>
           </div>
         </div>
-
-        <div className="stat-card warning">
+        <div className="stat-card warning" title="Rt moyen mondial (OMS)">
           <div className="stat-content">
-            <h3 className="stat-value">{globalStats.averageRt}</h3>
+            <h3 className="stat-value">{stats.averageRt.toFixed(2)}</h3>
             <p className="stat-label">Rt Moyen Mondial</p>
           </div>
         </div>
-
-        <div className="stat-card info">
+        <div className="stat-card info" title="Taux de mortalité cumulé OMS">
           <div className="stat-content">
-            <h3 className="stat-value">{globalStats.mortalityRate}%</h3>
+            <h3 className="stat-value">{stats.mortalityRate.toFixed(1)}%</h3>
             <p className="stat-label">Taux de Mortalité</p>
           </div>
         </div>
-
-        <div className="stat-card success">
-          <div className="stat-content">
-            <h3 className="stat-value">{globalStats.mpoxCases}</h3>
-            <p className="stat-label">Cas MPOX</p>
-          </div>
-        </div>
-
-        <div className="stat-card alert">
+        <div className="stat-card alert" title="Nombre de pays à risque élevé OMS">
           <div className="stat-icon">⚠️</div>
           <div className="stat-content">
-            <h3 className="stat-value">{globalStats.riskCountries}</h3>
+            <h3 className="stat-value">{stats.riskCountries}</h3>
             <p className="stat-label">Pays à Risque</p>
           </div>
         </div>
@@ -183,50 +284,27 @@ const Dashboard = () => {
         <h2 className="section-title">
           Analyses et Tendances
         </h2>
-
         <div className="charts-grid">
           {/* World Map Visualization */}
           <div className="chart-card world-map">
             <h3 className="chart-title">
-              Carte Mondiale des Risques
+              Carte des Risques {diseaseMeta.label}
             </h3>
             <div className="world-map-container">
               <div className="map-placeholder">
                 <div className="map-regions">
-                  <div className="region high-risk">
-                    <span className="region-label">Amérique du Sud</span>
-                    <span className="risk-level">Risque Élevé</span>
-                  </div>
-                  <div className="region medium-risk">
-                    <span className="region-label">Amérique du Nord</span>
-                    <span className="risk-level">Risque Modéré</span>
-                  </div>
-                  <div className="region low-risk">
-                    <span className="region-label">Europe</span>
-                    <span className="risk-level">Risque Faible</span>
-                  </div>
-                  <div className="region very-low-risk">
-                    <span className="region-label">Océanie</span>
-                    <span className="risk-level">Risque Très Faible</span>
-                  </div>
+                  {stats.riskMap.map((item, index) => (
+                    <div key={index} className={`region ${riskClassMap[item.risk]}`}>
+                      <span className="region-label">{item.region}</span>
+                      <span className="risk-level">{item.risk}</span>
+                    </div>
+                  ))}
                 </div>
                 <div className="map-legend">
-                  <div className="legend-item">
-                    <span className="legend-color high"></span>
-                    <span>Risque Élevé</span>
-                  </div>
-                  <div className="legend-item">
-                    <span className="legend-color medium"></span>
-                    <span>Risque Modéré</span>
-                  </div>
-                  <div className="legend-item">
-                    <span className="legend-color low"></span>
-                    <span>Risque Faible</span>
-                  </div>
-                  <div className="legend-item">
-                    <span className="legend-color very-low"></span>
-                    <span>Très Faible</span>
-                  </div>
+                  <div className="legend-item"><span className="legend-color high"></span>Risque Élevé</div>
+                  <div className="legend-item"><span className="legend-color medium"></span>Risque Modéré</div>
+                  <div className="legend-item"><span className="legend-color low"></span>Risque Faible</div>
+                  <div className="legend-item"><span className="legend-color very-low"></span>Très Faible</div>
                 </div>
               </div>
             </div>
@@ -234,44 +312,63 @@ const Dashboard = () => {
 
           {/* Time Series Chart */}
           <div className="chart-card time-series">
-            <h3 className="chart-title">
-              Évolution Temporelle (7 derniers jours)
-            </h3>
+            <h3 className="chart-title">Évolution Temporelle</h3>
+            <div className="chart-period-subtitle">{diseasePeriods[selectedDisease].label}</div>
             <div className="time-series-chart">
-              <div className="chart-controls">
-                <button className="chart-toggle active">Cases</button>
-                <button className="chart-toggle">Deaths</button>
-                <button className="chart-toggle">Rt</button>
+              <div className="chart-controls" role="tablist" aria-label="Type de série temporelle">
+                <button
+                  className={`chart-toggle${timeSeriesType === 'cases' ? ' active' : ''}`}
+                  onClick={() => setTimeSeriesType('cases')}
+                  role="tab"
+                  aria-selected={timeSeriesType === 'cases'}
+                  aria-label="Cas"
+                >Cases</button>
+                <button
+                  className={`chart-toggle${timeSeriesType === 'deaths' ? ' active' : ''}`}
+                  onClick={() => setTimeSeriesType('deaths')}
+                  role="tab"
+                  aria-selected={timeSeriesType === 'deaths'}
+                  aria-label="Décès"
+                >Deaths</button>
               </div>
-              <div className="line-chart">
-                {timeSeriesData.map((point, index) => (
-                  <div key={index} className="chart-point">
-                    <div 
-                      className="point-bar" 
-                      style={{ 
-                        height: `${(point.cases / 50000) * 100}%`,
-                        backgroundColor: getRtColor(point.rt)
-                      }}
-                    ></div>
-                    <div className="point-label">{point.date.split('-')[2]}</div>
-                    <div className="point-value">{formatNumber(point.cases)}</div>
-                  </div>
-                ))}
-              </div>
+              <ChartComponent
+                type="bar"
+                data={getYearlyData(selectedDisease, timeSeriesType)}
+                title={
+                  timeSeriesType === 'cases'
+                    ? (selectedDisease === 'covid' ? 'Cas COVID-19 par année' : 'Cas MPOX par année')
+                    : (selectedDisease === 'covid' ? 'Décès COVID-19 par année' : 'Décès MPOX par année')
+                }
+                height={260}
+                options={{
+                  plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      title: { display: true, text: timeSeriesType === 'cases' ? 'Cas' : 'Décès' }
+                    }
+                  }
+                }}
+              />
             </div>
           </div>
 
           {/* Top Countries Chart */}
           <div className="chart-card countries-ranking">
             <h3 className="chart-title">
-              Top 8 Pays - Données Actuelles
+              Top 8 Pays – {diseaseMeta.label}
             </h3>
             <div className="countries-chart">
-              {worldData.map((country, index) => (
-                <div key={index} className="country-row">
+              {stats.topCountries.map((country, index) => (
+                <div key={index} className="country-row" title={`Statistiques ${diseaseMeta.label} pour ${country.country}`}>
                   <div className="country-info">
                     <span className="country-rank">#{index + 1}</span>
+                    <span className="country-flag" aria-label={`Drapeau ${country.country}`}>{countryFlags[country.country] || '🌍'}</span>
                     <span className="country-name">{country.country}</span>
+                    <span className="disease-badge" style={{ background: diseaseMeta.color }}>{diseaseMeta.label}</span>
                   </div>
                   <div className="country-stats">
                     <div className="stat">
@@ -284,21 +381,10 @@ const Dashboard = () => {
                     </div>
                     <div className="stat">
                       <span className="stat-label">Rt</span>
-                      <span 
-                        className="stat-value rt-value" 
-                        style={{ color: getRtColor(country.rt) }}
-                      >
-                        {country.rt}
-                      </span>
+                      <span className="stat-value rt-value" style={{ color: getRtColor(country.rt) }}>{country.rt}</span>
                     </div>
                   </div>
-                  <div 
-                    className="country-bar"
-                    style={{ 
-                      width: `${(country.cases / Math.max(...worldData.map(d => d.cases))) * 100}%`,
-                      backgroundColor: getRtColor(country.rt)
-                    }}
-                  ></div>
+                  <div className="country-bar" style={{ width: `${(country.cases / Math.max(...stats.topCountries.map(d => d.cases))) * 100}%`, backgroundColor: getRtColor(country.rt) }}></div>
                 </div>
               ))}
             </div>
@@ -306,41 +392,39 @@ const Dashboard = () => {
 
           {/* Risk Analysis Pie Chart */}
           <div className="chart-card risk-analysis">
-            <h3 className="chart-title">
-              Analyse des Risques par Région
-            </h3>
+            <h3 className="chart-title">Analyse des Risques par Région</h3>
             <div className="risk-pie-chart">
-              <div className="pie-container">
-                <div className="pie-chart">
-                  <div className="pie-slice high" style={{ '--percentage': '25%' }}>
-                    <span className="slice-label">25%</span>
-                  </div>
-                  <div className="pie-slice medium" style={{ '--percentage': '30%' }}>
-                    <span className="slice-label">30%</span>
-                  </div>
-                  <div className="pie-slice low" style={{ '--percentage': '30%' }}>
-                    <span className="slice-label">30%</span>
-                  </div>
-                  <div className="pie-slice very-low" style={{ '--percentage': '15%' }}>
-                    <span className="slice-label">15%</span>
-                  </div>
-                </div>
-              </div>
+              <ChartComponent
+                type="doughnut"
+                data={{
+                  labels: ['Élevé', 'Modéré', 'Faible', 'Très Faible'],
+                  datasets: [{
+                    data: [
+                      stats.riskAnalysis.highRisk.length,
+                      stats.riskAnalysis.mediumRisk.length,
+                      stats.riskAnalysis.lowRisk.length,
+                      stats.riskAnalysis.veryLowRisk.length
+                    ],
+                    backgroundColor: ['#e74c3c', '#f39c12', '#3498db', '#27ae60'],
+                    borderWidth: 2
+                  }]
+                }}
+                title={`Répartition des risques ${diseaseMeta.label}`}
+                height={220}
+                options={{ plugins: { legend: { position: 'bottom' } } }}
+              />
               <div className="risk-legend">
-                {Object.entries(riskAnalysis).map(([level, countries]) => (
+                {Object.entries(stats.riskAnalysis).map(([level, countries]) => (
                   <div key={level} className="risk-item">
                     <div className="risk-header">
-                      <span 
-                        className="risk-indicator"
-                        style={{ backgroundColor: getRiskColor(level.replace('Risk', '').toLowerCase()) }}
-                      ></span>
+                      <span className="risk-indicator" style={{ backgroundColor: getRiskColor(level.replace('Risk', '').toLowerCase()) }}></span>
                       <span className="risk-title">
                         {level.replace('Risk', ' Risk').replace('very', 'Très').replace('high', 'Élevé').replace('medium', 'Modéré').replace('low', 'Faible')}
                       </span>
                     </div>
                     <div className="risk-countries">
                       {countries.slice(0, 2).map((country, idx) => (
-                        <span key={idx} className="country-tag">{country}</span>
+                        <span key={idx} className="country-tag">{countryFlags[country] || '🌍'} {country}</span>
                       ))}
                       {countries.length > 2 && (
                         <span className="more-countries">+{countries.length - 2}</span>
@@ -354,99 +438,44 @@ const Dashboard = () => {
 
           {/* Model Performance Chart */}
           <div className="chart-card model-performance">
-            <h3 className="chart-title">
-              Performance des Modèles IA
-            </h3>
+            <h3 className="chart-title">Performance des Modèles IA</h3>
             <div className="performance-chart">
               <div className="model-bars">
                 <div className="model-bar">
                   <div className="model-name">LSTM (Rt)</div>
                   <div className="performance-bar">
-                    <div className="bar-fill" style={{ width: '68%', backgroundColor: '#3498db' }}>
-                      <span className="bar-label">68%</span>
-                    </div>
+                    <div className="bar-fill" style={{ width: '68%', backgroundColor: '#3498db' }}><span className="bar-label">68%</span></div>
                   </div>
                 </div>
                 <div className="model-bar">
                   <div className="model-name">Random Forest (Mortalité)</div>
                   <div className="performance-bar">
-                    <div className="bar-fill" style={{ width: '82%', backgroundColor: '#27ae60' }}>
-                      <span className="bar-label">82%</span>
-                    </div>
+                    <div className="bar-fill" style={{ width: '82%', backgroundColor: '#27ae60' }}><span className="bar-label">82%</span></div>
                   </div>
                 </div>
                 <div className="model-bar">
                   <div className="model-name">Clustering (Propagation)</div>
                   <div className="performance-bar">
-                    <div className="bar-fill" style={{ width: '74%', backgroundColor: '#f39c12' }}>
-                      <span className="bar-label">74%</span>
-                    </div>
+                    <div className="bar-fill" style={{ width: '74%', backgroundColor: '#f39c12' }}><span className="bar-label">74%</span></div>
                   </div>
                 </div>
               </div>
               <div className="performance-summary">
-                <div className="summary-item">
-                  <span className="summary-label">Précision Moyenne</span>
-                  <span className="summary-value">74.7%</span>
-                </div>
-                <div className="summary-item">
-                  <span className="summary-label">Prédictions Effectuées</span>
-                  <span className="summary-value">2,847</span>
-                </div>
-                <div className="summary-item">
-                  <span className="summary-label">Temps de Calcul Moyen</span>
-                  <span className="summary-value">2.3s</span>
-                </div>
+                <div className="summary-item"><span className="summary-label">Précision Moyenne</span><span className="summary-value">74.7%</span></div>
+                <div className="summary-item"><span className="summary-label">Prédictions Effectuées</span><span className="summary-value">2,847</span></div>
+                <div className="summary-item"><span className="summary-label">Temps de Calcul Moyen</span><span className="summary-value">2.3s</span></div>
+              </div>
+              <div className="model-explanation" aria-live="polite">
+                <ul>
+                  <li><b>LSTM (Rt)</b> : Prédiction du taux de transmission (Rt) à partir de séries temporelles.</li>
+                  <li><b>Random Forest (Mortalité)</b> : Analyse des facteurs de risque et estimation de la mortalité.</li>
+                  <li><b>Clustering (Propagation)</b> : Identification des clusters géographiques à risque.</li>
+                </ul>
               </div>
             </div>
           </div>
 
-          {/* Real-time Monitoring */}
-          <div className="chart-card realtime-monitoring">
-            <h3 className="chart-title">
-              Surveillance Temps Réel
-            </h3>
-            <div className="monitoring-dashboard">
-              <div className="monitoring-metrics">
-                <div className="metric-item active">
-                  <div className="metric-content">
-                    <span className="metric-label">Alertes Actives</span>
-                    <span className="metric-value">3</span>
-                  </div>
-                  <div className="metric-pulse"></div>
-                </div>
-                <div className="metric-item">
-                  <div className="metric-content">
-                    <span className="metric-label">Dernière Analyse</span>
-                    <span className="metric-value">2 min</span>
-                  </div>
-                </div>
-                <div className="metric-item">
-                  <div className="metric-content">
-                    <span className="metric-label">Sources Actives</span>
-                    <span className="metric-value">195</span>
-                  </div>
-                </div>
-              </div>
-              <div className="monitoring-alerts">
-                <div className="alert-item high">
-                  <span className="alert-icon">🔴</span>
-                  <span className="alert-text">Rt élevé détecté en Brésil</span>
-                  <span className="alert-time">Il y a 5 min</span>
-                </div>
-                <div className="alert-item medium">
-                  <span className="alert-icon">🟡</span>
-                  <span className="alert-text">Augmentation des cas en Inde</span>
-                  <span className="alert-time">Il y a 12 min</span>
-                </div>
-                <div className="alert-item low">
-                  <span className="alert-icon">🟢</span>
-                  <span className="alert-text">Amélioration en France</span>
-                  <span className="alert-time">Il y a 18 min</span>
-                </div>
-              </div>
-            </div>
-          </div>
+
         </div>
       </div>
 
@@ -527,41 +556,21 @@ const Dashboard = () => {
 
       {/* Recent Predictions */}
       <div className="recent-predictions">
-        <h2 className="section-title">
-          Prédictions Récentes
-        </h2>
+        <h2 className="section-title">Prédictions Récentes</h2>
         <div className="predictions-grid">
-          {recentPredictions.map((prediction) => (
-            <div key={prediction.id} className="prediction-card">
+          {stats.recentPredictions.map((prediction) => (
+            <div key={prediction.id} className="prediction-card" title={`Prédiction ${prediction.type} pour ${prediction.country}`} aria-label={`Prédiction ${diseaseMeta.label} ${prediction.type} ${prediction.country}`}>
               <div className="prediction-header">
+                <span className="disease-badge" style={{ background: diseaseMeta.color }}>{diseaseMeta.label}</span>
                 <h4 className="prediction-type">{prediction.type}</h4>
-                <span className="prediction-country">{prediction.country}</span>
+                <span className="prediction-country">{countryFlags[prediction.country] || '🌍'} {prediction.country}</span>
               </div>
               <div className="prediction-content">
-                <div className="prediction-value">
-                  {typeof prediction.value === 'number' 
-                    ? prediction.value.toFixed(2) 
-                    : prediction.value}
-                </div>
-                <div className="prediction-trend">
-                  <span 
-                    className="trend-icon"
-                    style={{ color: getTrendColor(prediction.trend) }}
-                  >
-                    {getTrendIcon(prediction.trend)}
-                  </span>
-                  <span className="trend-text">{prediction.trend}</span>
-                </div>
-              </div>
-              <div className="prediction-footer">
-                <div className="confidence-bar">
-                  <div className="confidence-label">Confiance : {prediction.confidence}%</div>
-                  <div className="confidence-progress">
-                    <div 
-                      className="confidence-fill"
-                      style={{ width: `${prediction.confidence}%` }}
-                    ></div>
-                  </div>
+                <div className="prediction-value">{typeof prediction.value === 'number' ? prediction.value.toFixed(2) : prediction.value}</div>
+                <div className="prediction-trend"><span className="trend-icon" style={{ color: getTrendColor(prediction.trend) }}>{getTrendIcon(prediction.trend)}</span> <span className="trend-text">{prediction.trend}</span></div>
+                <div className="confidence-bar" title={`Confiance : ${prediction.confidence}%`}>
+                  <div className="confidence-fill" style={{ width: `${prediction.confidence}%` }}></div>
+                  <span className="confidence-label">{prediction.confidence}%</span>
                 </div>
                 <div className="prediction-date">{prediction.date}</div>
               </div>

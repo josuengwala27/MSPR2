@@ -19,7 +19,7 @@ class ExpressAPIClient:
     
     def __init__(self):
         self.base_url = os.getenv("API_EXPRESS_URL", "http://localhost:3000")
-        self.timeout = int(os.getenv("API_EXPRESS_TIMEOUT", 120))
+        self.timeout = 180
         self.max_retries = 3
         self.retry_delay = 1  # secondes
         

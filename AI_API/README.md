@@ -253,3 +253,62 @@ curl "http://localhost:8000/api/mortality/predict?pays=France&source=covid&horiz
 ### Erreur de Modèle
 - Vérifier les logs : `LOG_LEVEL=DEBUG`
 - Redémarrer l'API IA
+
+## 4. Prédictions de Propagation Géographique (Spread Predictions)
+
+### Qu’est-ce que la propagation géographique ?
+La propagation géographique correspond à l’identification de groupes de pays présentant une dynamique épidémique similaire, grâce à un **clustering KMeans multi-pays** appliqué sur les séries temporelles de cas ou de décès.
+
+- **But** : Regrouper les pays selon la similarité de leur évolution épidémique (COVID, MPOX, etc.).
+- **Méthode** : Clustering KMeans sur les séries temporelles de chaque pays (cas ou décès).
+- **Utilité** : Surveillance internationale, détection de groupes à risque, aide à la décision OMS.
+
+### Endpoint
+```bash
+GET /api/spread/predict?indicator=cases&source=covid&k=3
+```
+- `indicator` : "cases" ou "deaths"
+- `source` : "covid", "mpox", etc.
+- `k` : nombre de clusters (groupes de pays)
+
+### Exemple d’appel
+```bash
+curl "http://localhost:8000/api/spread/predict?indicator=cases&source=covid&k=3"
+```
+
+### Exemple de réponse
+```json
+{
+  "clusters": [
+    {
+      "cluster": 1,
+      "countries": [
+        {"iso_code": "FRA", "country": "France"},
+        {"iso_code": "DEU", "country": "Germany"}
+      ]
+    },
+    {
+      "cluster": 2,
+      "countries": [
+        {"iso_code": "ITA", "country": "Italy"},
+        {"iso_code": "ESP", "country": "Spain"}
+      ]
+    }
+  ],
+  "meta": {
+    "indicator": "cases",
+    "source": "covid",
+    "k": 3,
+    "count": 234,
+    "model": "KMeans",
+    "doc": "Clustering KMeans sur les séries temporelles de chaque pays. Les pays d'un même cluster présentent une dynamique similaire pour l'indicateur donné."
+  }
+}
+```
+
+### Distinction avec les autres prédictions
+- **Rt** : Prédit le taux de transmission (nombre de personnes infectées par malade).
+- **Mortalité** : Prédit le taux de décès.
+- **Propagation géographique (Spread)** : Regroupe les pays par similarité de propagation, **ne prédit pas le nombre de cas/jour**.
+
+---
