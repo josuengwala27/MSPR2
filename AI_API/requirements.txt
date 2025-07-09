@@ -1,0 +1,27 @@
+# FastAPI et serveur
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Client HTTP pour communiquer avec l'API Express.js
+httpx==0.25.2
+aiohttp==3.9.1
+
+# Machine Learning
+scikit-learn==1.4.0
+pandas==2.2.0
+numpy==1.26.4
+
+# Deep Learning (optionnel pour LSTM) - versions compatibles Python 3.12
+tensorflow==2.16.1  # Commenté temporairement pour test
+
+# Utilitaires
+python-dotenv==1.0.0
+pydantic==2.5.0
+python-multipart==0.0.6
+
+# Tests
+pytest==7.4.3
+pytest-asyncio==0.21.1
+
+# Documentation
+jinja2==3.1.2 

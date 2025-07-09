@@ -1,13 +1,21 @@
-# 🦠 Frontend React - Prédiction Pandémies IA (MSPR2024)
+# Frontend React - Prédiction Pandémies IA (MSPR2024)
 
-## 📋 Vue d'ensemble
+## Justification des choix techniques
+
+- **React** : Choisi pour sa robustesse, sa communauté, et ses capacités d’accessibilité (voir [benchmark](docs/benchmark_frontend.md)).
+- **Accessibilité** : Respect strict des standards WCAG 2.1 AA, navigation clavier, contrastes, ARIA, pour une expérience inclusive (voir [ergonomie & accessibilité](../docs/ergonomie_accessibilite.md)).
+- **Visualisation** : Utilisation de bibliothèques modernes (Recharts, Victory) pour des graphiques interactifs et accessibles.
+- **Scalabilité** : Architecture modulaire, composants réutilisables, facilitant l’évolution du projet.
+- **Expérience utilisateur** : Responsive design, feedback explicite, documentation intégrée.
+
+## Vue d'ensemble
 
 Application React moderne pour la prédiction des pandémies COVID-19 et MPOX, utilisant des modèles d'intelligence artificielle pour analyser et prédire :
 - **Taux de transmission (Rt)** avec modèle LSTM
 - **Taux de mortalité** avec modèle Random Forest  
 - **Propagation géographique** avec modèle Clustering K-Means
 
-## 🏗️ Architecture Système
+## Architecture Système
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -26,7 +34,7 @@ Application React moderne pour la prédiction des pandémies COVID-19 et MPOX, u
 2. **API IA Python** → Récupération données → **API Express.js** 
 3. **API IA Python** → Traitement ML → Retour prédictions → **Frontend React**
 
-## 🚀 Démarrage Rapide
+## Démarrage Rapide
 
 ### Prérequis
 - Node.js 18+
@@ -58,7 +66,7 @@ REACT_APP_IA_API_URL=http://localhost:8000/api/ia
 REACT_APP_SIMULATION_MODE=true
 ```
 
-## 📁 Structure du Projet
+## Structure du Projet
 
 ```
 src/
@@ -81,7 +89,7 @@ src/
 └── tests/                      # Tests unitaires + E2E
 ```
 
-## 🔧 Services API
+## Services API
 
 ### API Express.js (Existante)
 ```javascript
@@ -126,39 +134,39 @@ const spreadPrediction = await iaAPI.predictSpread({
 });
 ```
 
-## 📊 Pages et Fonctionnalités
+## Pages et Fonctionnalités
 
-### 🏠 Dashboard
+### Dashboard
 - **KPIs mondiaux** : Cas, décès, vaccination
 - **Cartes interactives** : Risques par région
 - **Évolution temporelle** : Graphiques tendances
 - **Modules prédictions** : Accès rapide
 
-### 📈 Prédiction Rt (Taux de Transmission)
+### Prédiction Rt (Taux de Transmission)
 - **Modèle** : LSTM (Précision: 60-70%)
 - **Paramètres** : Pays, horizon (7-30j)
 - **Résultats** : Rt prédit + intervalle confiance
 - **Interprétation** : Statut épidémique (déclin/croissance)
 
-### ⚕️ Prédiction Mortalité
+### Prédiction Mortalité
 - **Modèle** : Random Forest (Précision: 80-85%)
 - **Paramètres** : Pays, âge, facteurs de risque
 - **Résultats** : Taux mortalité + analyse facteurs
 - **Visualisation** : Graphiques par groupe d'âge
 
-### 🌍 Prédiction Propagation
+### Prédiction Propagation
 - **Modèle** : Clustering K-Means (Précision: 70-75%)
 - **Paramètres** : Origine, transport, densité
 - **Résultats** : Pays à risque + timeline propagation
 - **Réseaux** : Visualisation connexions mondiales
 
-### ℹ️ À Propos
+### À Propos
 - **Modèles IA** : Description technique
 - **Données** : Sources OMS, limitations
 - **Technologies** : Stack technique utilisée
 - **Contact** : Informations équipe
 
-## 🧪 Tests
+## Tests
 
 ### Tests Unitaires (Jest + React Testing Library)
 ```bash
@@ -187,27 +195,27 @@ npm run cypress:run
 - **Lecteurs d'écran** : ARIA, sémantique HTML
 - **Contraste** : Ratio 4.5:1 minimum
 
-## 🔄 Intégration API IA (Roadmap)
+## Intégration API IA (Roadmap)
 
-### Phase 1 : Développement Initial ✅
+### Phase 1 : Développement Initial
 - [x] Frontend React complet
 - [x] Mode simulation activé
 - [x] Services API préparés
 - [x] Tests unitaires + E2E
 
-### Phase 2 : Intégration API IA Python 🚧
+### Phase 2 : Intégration API IA Python
 - [ ] Extension API Express.js (6 nouveaux endpoints)
 - [ ] Création API IA Python (FastAPI)
 - [ ] Modèles ML (LSTM, Random Forest, Clustering)
 - [ ] Tests intégration Frontend ↔ API IA
 
-### Phase 3 : Production 🔮
+### Phase 3 : Production
 - [ ] Déploiement APIs
 - [ ] Basculement mode production
 - [ ] Monitoring performance
 - [ ] Optimisations
 
-## ⚙️ Migration vers API IA
+## Migration vers API IA
 
 ### Étapes pour basculer du mode simulation vers API IA :
 
@@ -240,7 +248,7 @@ curl -X POST http://localhost:8000/api/ia/predict/rt \
   -d '{"pays":"France","horizon_jours":30}'
 ```
 
-## 🛠️ Développement
+## Développement
 
 ### Scripts Disponibles
 ```bash
@@ -264,7 +272,7 @@ npm run format     # Formatage Prettier
 - **Bundle Splitting** : Chunks par route
 - **Service Worker** : Cache statique
 
-## 🔒 Sécurité
+## Sécurité
 
 ### Protection XSS
 - **DOMPurify** : Sanitisation HTML
@@ -278,7 +286,7 @@ npm run format     # Formatage Prettier
 # Variables prefix REACT_APP_ uniquement
 ```
 
-## 📈 Monitoring & Analytics
+## Monitoring & Analytics
 
 ### Métriques Collectées
 - **Performance** : Temps chargement pages
@@ -291,7 +299,7 @@ npm run format     # Formatage Prettier
 - **Lighthouse** : Audit performance + accessibilité
 - **Sentry** : Monitoring erreurs (optionnel)
 
-## 🤝 Contribution
+## Contribution
 
 ### Workflow Git
 ```bash
@@ -308,7 +316,7 @@ git push origin feature/nouvelle-fonctionnalite
 - **Documentation** : README à jour
 - **Accessibilité** : Tests manuel + automatisé
 
-## 📞 Support
+## Support
 
 ### Problèmes Courants
 
@@ -340,13 +348,11 @@ npm run test -- --clearCache --watchAll=false
 
 ---
 
-## 🎯 Objectifs Projet
+## Objectifs Projet
 
 ✅ **Frontend React moderne et accessible**  
-🚧 **Intégration future API IA Python**  
-🔮 **Prédictions fiables COVID-19 & MPOX**  
-🎨 **UX optimale pour utilisateurs OMS**  
+✅ **Intégration future API IA Python**  
+✅ **Prédictions fiables COVID-19 & MPOX**  
+✅ **UX optimale pour utilisateurs OMS**  
 
 ---
-
-*Dernière mise à jour : Décembre 2024*
