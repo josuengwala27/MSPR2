@@ -1,0 +1,124 @@
+services:
+  # Base de données PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: pandemies-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres123}
+      POSTGRES_DB: ${POSTGRES_DB:-pandemies_db}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./BDD/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - pandemies-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-pandemies_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # API Express.js
+  api-express:
+    build:
+      context: ./API
+      dockerfile: Dockerfile
+    container_name: pandemies-api-express
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres123}@postgres:5432/${POSTGRES_DB:-pandemies_db}
+      PORT: 3001
+      NODE_ENV: production
+    ports:
+      - "3001:3001"
+    networks:
+      - pandemies-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./API/logs:/app/logs
+    restart: unless-stopped
+
+  # API IA FastAPI
+  api-ia:
+    build:
+      context: ./AI_API
+      dockerfile: Dockerfile.light  # Version allégée sans TensorFlow
+    container_name: pandemies-api-ia
+    environment:
+      API_EXPRESS_URL: http://api-express:3001
+      API_IA_HOST: 0.0.0.0
+      API_IA_PORT: 8000
+      LOG_LEVEL: INFO
+    ports:
+      - "8000:8000"
+    networks:
+      - pandemies-network
+    depends_on:
+      - api-express
+    volumes:
+      - ./AI_API/logs:/app/logs
+    restart: unless-stopped
+
+  # Frontend React avec Nginx
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: pandemies-frontend
+    ports:
+      - "3000:80"
+    networks:
+      - pandemies-network
+    depends_on:
+      - api-express
+      - api-ia
+    restart: unless-stopped
+
+  # ETL Pipeline (job ponctuel)
+  etl:
+    build:
+      context: ./ETL
+      dockerfile: Dockerfile
+    container_name: pandemies-etl
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres123}@postgres:5432/${POSTGRES_DB:-pandemies_db}
+    networks:
+      - pandemies-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./ETL/raw_data:/app/raw_data
+      - ./ETL/processed:/app/processed
+      - ./ETL/logs:/app/logs
+    profiles:
+      - etl  # Ce service ne démarre que si explicitement demandé
+
+  # Redis pour le cache (optionnel)
+  redis:
+    image: redis:7-alpine
+    container_name: pandemies-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - pandemies-network
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  pandemies-network:
+    driver: bridge
+    name: pandemies-network

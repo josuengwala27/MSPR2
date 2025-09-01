@@ -31,6 +31,15 @@ app.get('/', (req, res) => {
   res.json({ message: 'Bienvenue sur l\'API Pandémies' });
 });
 
+// Route de santé pour Docker
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
 // Gestion des erreurs
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -1,13 +1,37 @@
-# Environnement Python
+# Environnements Python
 ETL/venv/
+AI_API/venv_ai/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.Python
 
-# Environnement Node.js
+# Environnements Node.js
+**/node_modules/
 BDD/node_modules/
+API/node_modules/
+frontend/node_modules/
 
 # Fichiers de configuration sensibles
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 BDD/.env
+API/.env
+AI_API/.env
+
+# Logs
+**/logs/
+ETL/logs/
+API/logs/
+AI_API/logs/
+*.log
+
+# Docker
+docker.env
 
 # Fichiers temporaires
 *.tmp
@@ -15,4 +39,8 @@ BDD/.env
 Thumbs.db
 
 # Jupyter notebooks checkpoints
-ETL/notebooks/.ipynb_checkpoints/ 
+ETL/notebooks/.ipynb_checkpoints/
+
+# Build files
+**/build/
+**/dist/ 

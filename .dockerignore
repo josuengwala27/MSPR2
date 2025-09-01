@@ -1,0 +1,66 @@
+# Fichiers et dossiers à ignorer lors du build Docker
+
+# Dossiers node_modules
+**/node_modules
+**/npm-debug.log*
+
+# Environnements virtuels Python
+**/venv
+**/venv_ai
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.Python
+
+# Fichiers de configuration locaux
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Fichiers de logs
+**/logs
+**/*.log
+
+# Fichiers de cache
+**/.cache
+**/coverage
+
+# Fichiers temporaires
+**/tmp
+**/temp
+
+# Fichiers Git
+.git
+.gitignore
+
+# Fichiers d'éditeur
+.vscode
+.idea
+**/.DS_Store
+
+# Fichiers Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Documentation
+**/README.md
+**/docs
+
+# Fichiers de test
+**/tests
+**/*.test.js
+**/*.test.py
+
+# Builds et distributions
+**/build
+**/dist
+**/target
+
+# Fichiers de données volumineux (à adapter selon vos besoins)
+**/raw_data/*.csv
+**/processed/*.csv
+
