@@ -1,0 +1,223 @@
+# Mesures DAX spécifiques France - RGPD Compliant
+# Adaptation du dashboard PowerBI existant pour l'architecture France
+
+## 🇫🇷 Mesures de base France
+
+### Total des cas France (anonymisé)
+```dax
+Total_Cas_France = 
+CALCULATE(
+    ROUND(SUM('Query1'[value]), -2),  -- Arrondi à la centaine (RGPD)
+    'Query1'[indicator] = "cases"
+)
+```
+
+### Total des décès France (anonymisé) 
+```dax
+Total_Deces_France = 
+CALCULATE(
+    ROUND(SUM('Query1'[value]), -1),  -- Arrondi à la dizaine (RGPD)
+    'Query1'[indicator] = "deaths"
+)
+```
+
+### Population RGPD (milliers)
+```dax
+Population_RGPD = 
+ROUND(AVERAGE('Query1'[population_rgpd]) / 1000, 0)
+```
+
+## 📊 Mesures d'indicateurs normalisés
+
+### Cas pour 100k habitants (RGPD)
+```dax
+Cas_100k_RGPD = 
+VAR TotalCas = [Total_Cas_France]
+VAR PopulationTotal = [Population_RGPD] * 1000
+RETURN
+IF(
+    PopulationTotal > 0,
+    ROUND(TotalCas / PopulationTotal * 100000, 0),  -- Pas de décimales (RGPD)
+    BLANK()
+)
+```
+
+### Décès pour 100k habitants (RGPD)
+```dax
+Deces_100k_RGPD = 
+VAR TotalDeces = [Total_Deces_France] 
+VAR PopulationTotal = [Population_RGPD] * 1000
+RETURN
+IF(
+    PopulationTotal > 0,
+    ROUND(TotalDeces / PopulationTotal * 100000, 0),  -- Pas de décimales (RGPD)
+    BLANK()
+)
+```
+
+## 📈 Mesures temporelles
+
+### Croissance hebdomadaire (lissée)
+```dax
+Croissance_7j_Lissee = 
+VAR CasActuels = [Total_Cas_France]
+VAR CasPrecedents = 
+    CALCULATE(
+        [Total_Cas_France],
+        DATEADD('Query1'[date], -7, DAY)
+    )
+RETURN
+IF(
+    AND(CasActuels > 0, CasPrecedents > 0),
+    ROUND((CasActuels - CasPrecedents) / CasPrecedents, 2),
+    BLANK()
+)
+```
+
+### Moyenne mobile 7 jours (anonymisée)
+```dax
+Moyenne_Mobile_7j = 
+ROUND(
+    AVERAGEX(
+        DATESINPERIOD('Query1'[date], LASTDATE('Query1'[date]), -7, DAY),
+        [Total_Cas_France]
+    ), 
+    -1  -- Arrondi à la dizaine (RGPD)
+)
+```
+
+## 🌍 Mesures géographiques (Europe uniquement)
+
+### Top 5 pays européens
+```dax
+Top5_Pays_Europe = 
+CALCULATE(
+    [Total_Cas_France],
+    TOPN(
+        5,
+        VALUES('Query1'[country]),
+        [Total_Cas_France]
+    ),
+    'Query1'[country] IN {
+        "France", "Germany", "Italy", "Spain", "Belgium", 
+        "Netherlands", "Portugal", "Austria", "Switzerland"
+    }
+)
+```
+
+### Pays sélectionné (pour titres dynamiques)
+```dax
+Pays_Selectionne_France = 
+VAR PaysSelectionne = SELECTEDVALUE('Query1'[country])
+RETURN
+IF(
+    PaysSelectionne = BLANK(),
+    "Tous les pays européens",
+    PaysSelectionne
+)
+```
+
+## 🛡️ Mesures de conformité RGPD
+
+### Indicateur de conformité RGPD
+```dax
+Conformite_RGPD = 
+VAR NombrePays = DISTINCTCOUNT('Query1'[country])
+VAR NombreLignes = COUNTROWS('Query1')
+RETURN
+IF(
+    AND(NombrePays <= 20, NombreLignes <= 100000),
+    "✅ Conforme RGPD",
+    "⚠️ Vérifier limites RGPD"
+)
+```
+
+### Période couverte (RGPD)
+```dax
+Periode_RGPD = 
+VAR DateMin = MIN('Query1'[date])
+VAR DateMax = MAX('Query1'[date])
+RETURN
+"Données du " & FORMAT(DateMin, "dd/mm/yyyy") & 
+" au " & FORMAT(DateMax, "dd/mm/yyyy") &
+" (Conforme rétention RGPD)"
+```
+
+### Nombre de pays européens
+```dax
+Nb_Pays_Europe = 
+CALCULATE(
+    DISTINCTCOUNT('Query1'[country]),
+    'Query1'[country] IN {
+        "France", "Germany", "Italy", "Spain", "Belgium", 
+        "Netherlands", "Portugal", "Austria", "Switzerland",
+        "Poland", "Czech Republic", "Hungary", "Romania"
+    }
+)
+```
+
+## 📤 Mesures d'export RGPD
+
+### Volume données exportables
+```dax
+Volume_Export_RGPD = 
+VAR NombreLignes = COUNTROWS('Query1')
+RETURN
+IF(
+    NombreLignes <= 10000,
+    FORMAT(NombreLignes, "#,##0") & " lignes (Export autorisé)",
+    FORMAT(NombreLignes, "#,##0") & " lignes (⚠️ Limiter à 10k pour export)"
+)
+```
+
+### Dernière mise à jour
+```dax
+Derniere_MAJ = 
+"Dernière mise à jour : " & 
+FORMAT(MAX('Query1'[date]), "dd/mm/yyyy") & 
+" | Source : PostgreSQL France"
+```
+
+## 🎨 Mesures pour titres dynamiques
+
+### Titre principal France
+```dax
+Titre_Principal_France = 
+VAR Indicateur = SELECTEDVALUE('Query1'[indicator], "Tous indicateurs")
+VAR Pays = [Pays_Selectionne_France]
+RETURN
+"📊 Pandémies France - " & 
+UPPER(Indicateur) & " - " & Pays & 
+" 🛡️ RGPD"
+```
+
+### Sous-titre période
+```dax
+Sous_Titre_Periode = 
+VAR DateDebut = MIN('Query1'[date])
+VAR DateFin = MAX('Query1'[date])
+RETURN
+"Période : " & FORMAT(DateDebut, "mmm yyyy") & 
+" à " & FORMAT(DateFin, "mmm yyyy") & 
+" | Données anonymisées RGPD"
+```
+
+## 📋 Utilisation des mesures
+
+1. **Remplacer** les mesures existantes par les versions France
+2. **Ajouter** les mesures RGPD dans une page de contrôle
+3. **Utiliser** les titres dynamiques France sur toutes les pages
+4. **Valider** la conformité avec [Conformite_RGPD]
+
+## ⚠️ Points d'attention RGPD
+
+- Les populations sont arrondies au millier
+- Les cas/décès sont arrondis (centaines/dizaines)  
+- Limitation à l'Europe pour la France
+- Export limité à 10k lignes
+- Pas de données personnelles
+- Rétention respectée (depuis 2020)
+
+---
+
+*Mesures DAX France - MSPR3 - Version 1.0.0 - Conforme RGPD*

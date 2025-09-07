@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  # API IA FastAPI - Configuration France (connexion à la base locale)
+  api-ia-france:
+    build:
+      context: ./AI_API
+      dockerfile: Dockerfile.france  # Dockerfile spécial France
+    container_name: pandemies-api-ia-france
+    environment:
+      # Connexion à la base PostgreSQL locale qui contient les données
+      DATABASE_URL: postgresql://postgres:root@host.docker.internal:5432/pandemies
+      API_IA_HOST: 0.0.0.0
+      API_IA_PORT: 8000
+      LOG_LEVEL: INFO
+      COUNTRY: "france"
+      LOCALE: "fr-FR"
+      # Mode France : connexion directe BDD
+      FRANCE_MODE: "true"
+      DIRECT_DB_ACCESS: "true"
+      # Configuration RGPD
+      GDPR_COMPLIANCE: "true"
+      DATA_ANONYMIZATION: "true"
+      PERSONAL_DATA_ENCRYPTION: "true"
+    ports:
+      - "8001:8000"  # Port principal pour France
+    networks:
+      - pandemies-network-france
+    volumes:
+      - ./AI_API/logs/france:/app/logs
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Frontend React avec Nginx - Configuration France
+  frontend-france:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        COUNTRY: france
+        LOCALE: fr-FR
+    container_name: pandemies-frontend-france
+    environment:
+      # Pas d'API Express en France - communication directe avec API IA
+      REACT_APP_AI_API_URL: http://localhost:8001
+      REACT_APP_COUNTRY: france
+      REACT_APP_LOCALE: fr-FR
+      REACT_APP_GDPR_ENABLED: "true"
+      REACT_APP_FRANCE_MODE: "true"
+    ports:
+      - "3080:80"  # Port différent
+    networks:
+      - pandemies-network-france
+    depends_on:
+      - api-ia-france
+    restart: unless-stopped
+    volumes:
+      - ./frontend/nginx-france.conf:/etc/nginx/conf.d/default.conf:ro
+
+  # ETL Pipeline - Configuration France
+  etl-france:
+    build:
+      context: ./ETL
+      dockerfile: Dockerfile
+    container_name: pandemies-etl-france
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER_FR:-postgres_fr}:${POSTGRES_PASSWORD_FR:-postgres123_fr_secure}@postgres-france:5432/${POSTGRES_DB_FR:-pandemies_db_france}
+      COUNTRY: "france"
+      GDPR_COMPLIANCE: "true"
+      DATA_ANONYMIZATION: "true"
+    networks:
+      - pandemies-network-france
+    volumes:
+      - ./ETL/raw_data:/app/raw_data
+      - ./ETL/processed:/app/processed
+      - ./ETL/logs/france:/app/logs
+    profiles:
+      - etl-france  # Démarre seulement si explicitement demandé
+
+  # Redis pour le cache - Configuration France
+  redis-france:
+    image: redis:7-alpine
+    container_name: pandemies-redis-france
+    ports:
+      - "6380:6379"  # Port différent
+    networks:
+      - pandemies-network-france
+    volumes:
+      - redis_data_france:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD_FR:-redis_france_secure}
+    # Configuration sécurité
+    sysctls:
+      - net.core.somaxconn=65535
+
+volumes:
+  redis_data_france:
+    driver: local
+
+networks:
+  pandemies-network-france:
+    driver: bridge
+    name: pandemies-network-france
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16  # Réseau dédié France

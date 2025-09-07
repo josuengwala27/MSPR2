@@ -1,0 +1,116 @@
+# Configuration de connexion PowerBI pour l'architecture France
+# MSPR3 - Conforme RGPD
+
+## Connexion PostgreSQL France
+
+**Serveur**: localhost,5432
+**Base de données**: pandemies  
+**Authentification**: Base de données
+**Nom d'utilisateur**: postgres
+**Mot de passe**: root
+
+## Requête de connexion SQL
+
+```sql
+-- Requête principale pour PowerBI France (RGPD compliant)
+SELECT 
+    id_donnee,
+    date,
+    country,
+    value,
+    indicator,
+    source,
+    iso_code,
+    -- Population anonymisée RGPD (arrondie au millier)
+    CASE 
+        WHEN population IS NOT NULL 
+        THEN ROUND(population / 1000.0, 0) * 1000 
+        ELSE NULL 
+    END as population_rgpd,
+    unit,
+    cases_per_100k,
+    deaths_per_100k,
+    incidence_7j,
+    growth_rate
+FROM donnee_historique
+WHERE 
+    -- Filtres RGPD France
+    date >= '2020-01-01'
+    AND country IN (
+        -- Limitation aux pays européens pour la France
+        'France', 'Germany', 'Italy', 'Spain', 'Belgium', 
+        'Netherlands', 'Portugal', 'Austria', 'Switzerland'
+    )
+ORDER BY date DESC
+LIMIT 100000;  -- Limite RGPD
+```
+
+## Mesures DAX spécifiques France
+
+### Total des cas anonymisé
+```dax
+Total_Cas_France = 
+CALCULATE(
+    SUM('Query1'[value]),
+    'Query1'[indicator] = "cases",
+    'Query1'[country] IN {"France", "Germany", "Italy", "Spain", "Belgium"}
+)
+```
+
+### Population RGPD
+```dax
+Population_RGPD_France = 
+ROUND(SUM('Query1'[population_rgpd]) / 1000, 0) * 1000
+```
+
+### Taux par 100k anonymisé
+```dax
+Taux_100k_Anonymise = 
+ROUND([Total_Cas_France] / [Population_RGPD_France] * 100000, 0)
+```
+
+## Conformité RGPD
+
+- ✅ **Données anonymisées**: Population arrondie au millier
+- ✅ **Limitation géographique**: Pays européens uniquement  
+- ✅ **Limitation temporelle**: Depuis 2020 seulement
+- ✅ **Limitation volume**: 100k enregistrements max
+- ✅ **Pas de données personnelles**: Aucune donnée individuelle
+
+## Instructions de déploiement
+
+1. Démarrer l'architecture France :
+   ```bash
+   ./scripts/france/deploy-france.sh
+   ```
+
+2. Vérifier la connexion PostgreSQL :
+   ```bash
+   ./scripts/france/monitor-france.sh database
+   ```
+
+3. Ouvrir PowerBI Desktop
+
+4. Se connecter à la source de données PostgreSQL avec les paramètres ci-dessus
+
+5. Importer les mesures DAX France
+
+6. Publier sur PowerBI Service si nécessaire
+
+## Troubleshooting
+
+**Erreur de connexion** :
+- Vérifier que PostgreSQL local est démarré (port 5432)
+- Vérifier les credentials : postgres/root
+
+**Données manquantes** :
+- Vérifier que l'ETL France a bien peuplé la base
+- Exécuter : `./scripts/france/monitor-france.sh database`
+
+**Performance lente** :
+- Limiter la plage de dates dans les filtres
+- Utiliser les index sur date, country, indicator
+
+---
+
+*Configuration PowerBI France - MSPR3 - Conforme RGPD*
