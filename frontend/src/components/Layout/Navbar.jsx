@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from '../../contexts/TranslationContext';
 import './Navbar.css';
 
 const Navbar = () => {
+  const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -19,10 +21,10 @@ const Navbar = () => {
       <div className="navbar-container">
         {/* Logo et titre */}
         <div className="navbar-brand">
-          <Link to="/" className="brand-link" aria-label="Accueil - OMS COVID & MPOX">
+          <Link to="/" className="brand-link" aria-label={`${t('navbar.home', 'Accueil')} - ${t('navbar.brand', 'OMS COVID & MPOX')}`}>
             <div className="logo">
               <span className="logo-icon">🦠</span>
-              <span className="logo-text">OMS COVID & MPOX</span>
+              <span className="logo-text">{t('navbar.brand', 'OMS COVID & MPOX')}</span>
             </div>
           </Link>
         </div>
@@ -33,7 +35,7 @@ const Navbar = () => {
           onClick={toggleMenu}
           aria-expanded={isMenuOpen}
           aria-controls="navbar-menu"
-          aria-label="Toggle navigation menu"
+          aria-label={t('navbar.toggle_menu', 'Toggle navigation menu')}
         >
           <span className="hamburger-line"></span>
           <span className="hamburger-line"></span>
@@ -50,7 +52,7 @@ const Navbar = () => {
                 role="menuitem"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Dashboard
+                {t('navbar.dashboard', 'Dashboard')}
               </Link>
             </li>
             
@@ -61,7 +63,7 @@ const Navbar = () => {
                 role="menuitem"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Prédiction Rt
+                {t('navbar.rt_prediction', 'Prédiction Rt')}
               </Link>
             </li>
             
@@ -72,7 +74,7 @@ const Navbar = () => {
                 role="menuitem"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Mortalité
+                {t('navbar.mortality', 'Mortalité')}
               </Link>
             </li>
             
@@ -83,7 +85,7 @@ const Navbar = () => {
                 role="menuitem"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Propagation
+                {t('navbar.spread', 'Propagation')}
               </Link>
             </li>
             
@@ -94,7 +96,7 @@ const Navbar = () => {
                 role="menuitem"
                 onClick={() => setIsMenuOpen(false)}
               >
-                À Propos
+                {t('navbar.about', 'À Propos')}
               </Link>
             </li>
           </ul>

@@ -1,0 +1,170 @@
+version: '3.8'
+
+services:
+  # Base de données PostgreSQL (Suisse)
+  postgres-switzerland:
+    image: postgres:15-alpine
+    container_name: pandemies-postgres-switzerland
+    environment:
+      POSTGRES_DB: pandemies_switzerland
+      POSTGRES_USER: pandemies_user
+      POSTGRES_PASSWORD: pandemies_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=fr_CH.UTF-8 --lc-ctype=fr_CH.UTF-8"
+    ports:
+      - "5433:5432"
+    volumes:
+      - ../BDD/init:/docker-entrypoint-initdb.d
+      - postgres_data_switzerland:/var/lib/postgresql/data
+    networks:
+      - pandemies-switzerland-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pandemies_user -d pandemies_switzerland"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API Express.js (Suisse)
+  api-express-switzerland:
+    build:
+      context: ../API
+      dockerfile: Dockerfile
+    container_name: pandemies-api-express-switzerland
+    environment:
+      DATABASE_URL: postgresql://pandemies_user:pandemies_password@postgres-switzerland:5432/pandemies_switzerland_db
+      REDIS_URL: redis://redis-switzerland:6379
+      SUPPORTED_LANGUAGES: fr,de,it
+      DEFAULT_LANGUAGE: fr
+      COUNTRY_CODE: CH
+      TIMEZONE: Europe/Zurich
+    ports:
+      - "3002:3000"
+    depends_on:
+      postgres-switzerland:
+        condition: service_healthy
+      redis-switzerland:
+        condition: service_started
+    networks:
+      - pandemies-switzerland-network
+
+  # API IA FastAPI (Suisse) - Version Light
+  api-ia-switzerland:
+    build:
+      context: ../AI_API
+      dockerfile: Dockerfile.light
+    container_name: pandemies-api-ia-switzerland
+    environment:
+      PORT: 8001
+      DB_HOST: postgres-switzerland
+      DB_PORT: 5432
+      DB_NAME: pandemies_switzerland
+      DB_USER: pandemies_user
+      DB_PASSWORD: pandemies_password
+      REDIS_HOST: redis-switzerland
+      REDIS_PORT: 6379
+      API_EXPRESS_URL: http://api-express-switzerland:3000
+      COUNTRY_CODE: CH
+      SUPPORTED_LANGUAGES: fr,de,it
+      DEFAULT_LANGUAGE: fr
+      TIMEZONE: Europe/Zurich
+      ENABLE_DATAVIZ: false
+      ENABLE_TECHNICAL_API: false
+    ports:
+      - "8001:8000"
+    depends_on:
+      postgres-switzerland:
+        condition: service_healthy
+      redis-switzerland:
+        condition: service_started
+    networks:
+      - pandemies-switzerland-network
+      - pandemies-network
+    volumes:
+      - ../AI_API/logs:/app/logs
+
+  # Frontend React (Suisse)
+  frontend-switzerland:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: pandemies-frontend-switzerland
+    environment:
+      REACT_APP_API_URL: http://localhost:8000
+      REACT_APP_TRANSLATION_URL: http://localhost:3004
+      REACT_APP_COUNTRY_CODE: CH
+      REACT_APP_SUPPORTED_LANGUAGES: fr,de,it
+      REACT_APP_DEFAULT_LANGUAGE: fr
+    ports:
+      - "3003:80"
+    depends_on:
+      - translation-service
+    networks:
+      - pandemies-switzerland-network
+      - pandemies-network
+
+  # Service de Traduction (Suisse)
+  translation-service:
+    build:
+      context: ./services/translation
+      dockerfile: Dockerfile
+    container_name: pandemies-translation-switzerland
+    environment:
+      PORT: 3004
+      SUPPORTED_LANGUAGES: fr,de,it
+      DEFAULT_LANGUAGE: fr
+      FALLBACK_LANGUAGE: fr
+    ports:
+      - "3004:3004"
+    volumes:
+      - ./config/i18n:/app/i18n:ro
+    networks:
+      - pandemies-switzerland-network
+
+  # Redis Cache (Suisse)
+  redis-switzerland:
+    image: redis:7-alpine
+    container_name: pandemies-redis-switzerland
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data_switzerland:/data
+    networks:
+      - pandemies-switzerland-network
+    command: redis-server --appendonly yes
+
+  # ETL Pipeline (Suisse) - Job ponctuel
+  etl-switzerland:
+    build:
+      context: ../ETL
+      dockerfile: Dockerfile
+    container_name: pandemies-etl-switzerland
+    environment:
+      DB_HOST: postgres-switzerland
+      DB_PORT: 5432
+      DB_NAME: pandemies_switzerland
+      DB_USER: pandemies_user
+      DB_PASSWORD: pandemies_password
+      COUNTRY_CODE: CH
+      TIMEZONE: Europe/Zurich
+    networks:
+      - pandemies-switzerland-network
+    depends_on:
+      postgres-switzerland:
+        condition: service_healthy
+    volumes:
+      - ../ETL/raw_data:/app/raw_data:rw
+      - ../ETL/processed:/app/processed:rw
+      - ../ETL/logs:/app/logs:rw
+      - ./data:/app/switzerland_data:rw
+    profiles:
+      - etl-switzerland
+
+volumes:
+  postgres_data_switzerland:
+  redis_data_switzerland:
+
+networks:
+  pandemies-switzerland-network:
+    driver: bridge
+    external: false
+  pandemies-network:
+    external: true

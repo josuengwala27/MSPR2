@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from '../contexts/TranslationContext';
 import ChartComponent from '../components/Charts/ChartComponent';
 import './Dashboard.css';
 
@@ -30,10 +31,10 @@ const COVID_STATS = {
     { date: '2024-01-07', cases: 30000, deaths: 760, rt: 0.9 }
   ],
   riskMap: [
-    { region: 'Amérique du Sud', risk: 'Élevé' },
-    { region: 'Amérique du Nord', risk: 'Modéré' },
-    { region: 'Europe', risk: 'Faible' },
-    { region: 'Océanie', risk: 'Très Faible' }
+    { region: 'South America', risk: 'High' },
+    { region: 'North America', risk: 'Medium' },
+    { region: 'Europe', risk: 'Low' },
+    { region: 'Oceania', risk: 'Very Low' }
   ],
   riskAnalysis: {
     highRisk: ['Brazil', 'India', 'Russia', 'Mexico'],
@@ -81,10 +82,10 @@ const MPOX_STATS = {
     { date: '2024-01-07', cases: 80, deaths: 0, rt: 0.95 }
   ],
   riskMap: [
-    { region: 'Afrique Centrale', risk: 'Élevé' },
-    { region: 'Afrique de l\'Ouest', risk: 'Modéré' },
-    { region: 'Europe', risk: 'Faible' },
-    { region: 'Amérique du Nord', risk: 'Très Faible' }
+    { region: 'Central Africa', risk: 'High' },
+    { region: 'West Africa', risk: 'Medium' },
+    { region: 'Europe', risk: 'Low' },
+    { region: 'North America', risk: 'Very Low' }
   ],
   riskAnalysis: {
     highRisk: ['RDC', 'Nigeria', 'Cameroun', 'Ghana'],
@@ -121,6 +122,7 @@ const diseasePeriods = {
 };
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const [selectedDisease, setSelectedDisease] = useState('covid');
   const stats = selectedDisease === 'covid' ? COVID_STATS : MPOX_STATS;
   const diseaseMeta = DISEASES.find(d => d.key === selectedDisease);
@@ -201,10 +203,10 @@ const Dashboard = () => {
   const chartLabels = stats.timeSeries.map(d => d.date.slice(5));
 
   const riskClassMap = {
-    'Élevé': 'high-risk',
-    'Modéré': 'medium-risk',
-    'Faible': 'low-risk',
-    'Très Faible': 'very-low-risk'
+    'High': 'high-risk',
+    'Medium': 'medium-risk',
+    'Low': 'low-risk',
+    'Very Low': 'very-low-risk'
   };
 
   return (
@@ -231,50 +233,50 @@ const Dashboard = () => {
         <div className="header-content">
           <h1 className="dashboard-title">
             <span className="title-icon">{diseaseMeta.icon}</span>
-            Tableau de Bord – {diseaseMeta.label}
+            {t('navigation.dashboard', 'Tableau de Bord')} – {diseaseMeta.label}
           </h1>
           <p className="dashboard-subtitle">
-            Surveillance et analyse en temps réel des données {diseaseMeta.label}
+            {t('common.welcome', 'Surveillance et analyse en temps réel des données')} {diseaseMeta.label}
           </p>
           <div className="last-update">
             <span className="update-icon">🕐</span>
-            Dernière mise à jour : {stats.lastUpdate}
+            {t('common.last_update', 'Dernière mise à jour')} : {stats.lastUpdate}
           </div>
         </div>
       </div>
 
       {/* Global Statistics */}
       <div className="stats-grid">
-        <div className="stat-card primary" title="Nombre total de pays surveillés OMS">
+        <div className="stat-card primary" title={t('health.countries_monitored', 'Nombre total de pays surveillés OMS')}>
           <div className="stat-content">
             <h3 className="stat-value">{stats.totalCountries}</h3>
-            <p className="stat-label">Pays Surveillés</p>
+            <p className="stat-label">{t('health.countries_monitored', 'Pays Surveillés')}</p>
           </div>
         </div>
-        <div className="stat-card danger" title={`Nombre cumulé de cas ${diseaseMeta.label}`}>
+        <div className="stat-card danger" title={t('health.cases_total', `Nombre cumulé de cas ${diseaseMeta.label}`)}>
           <div className="stat-icon">{diseaseMeta.icon}</div>
           <div className="stat-content">
             <h3 className="stat-value">{formatNumber(stats.cases)}</h3>
-            <p className="stat-label">Cas {diseaseMeta.label}</p>
+            <p className="stat-label">{t('health.cases', 'Cas')} {diseaseMeta.label}</p>
           </div>
         </div>
-        <div className="stat-card warning" title="Rt moyen mondial (OMS)">
+        <div className="stat-card warning" title={t('health.rt_average', 'Rt moyen mondial (OMS)')}>
           <div className="stat-content">
             <h3 className="stat-value">{stats.averageRt.toFixed(2)}</h3>
-            <p className="stat-label">Rt Moyen Mondial</p>
+            <p className="stat-label">{t('health.rt_average', 'Rt Moyen Mondial')}</p>
           </div>
         </div>
-        <div className="stat-card info" title="Taux de mortalité cumulé OMS">
+        <div className="stat-card info" title={t('health.mortality_rate', 'Taux de mortalité cumulé OMS')}>
           <div className="stat-content">
             <h3 className="stat-value">{stats.mortalityRate.toFixed(1)}%</h3>
-            <p className="stat-label">Taux de Mortalité</p>
+            <p className="stat-label">{t('health.mortality_rate', 'Taux de Mortalité')}</p>
           </div>
         </div>
-        <div className="stat-card alert" title="Nombre de pays à risque élevé OMS">
+        <div className="stat-card alert" title={t('health.risk_countries', 'Nombre de pays à risque élevé OMS')}>
           <div className="stat-icon">⚠️</div>
           <div className="stat-content">
             <h3 className="stat-value">{stats.riskCountries}</h3>
-            <p className="stat-label">Pays à Risque</p>
+            <p className="stat-label">{t('health.risk_countries', 'Pays à Risque')}</p>
           </div>
         </div>
       </div>
@@ -282,29 +284,29 @@ const Dashboard = () => {
       {/* Charts and Analytics Section */}
       <div className="analytics-section">
         <h2 className="section-title">
-          Analyses et Tendances
+          {t('analytics.title', 'Analyses et Tendances')}
         </h2>
         <div className="charts-grid">
           {/* World Map Visualization */}
           <div className="chart-card world-map">
             <h3 className="chart-title">
-              Carte des Risques {diseaseMeta.label}
+              {t('analytics.risk_map', 'Carte des Risques')} {diseaseMeta.label}
             </h3>
             <div className="world-map-container">
               <div className="map-placeholder">
                 <div className="map-regions">
                   {stats.riskMap.map((item, index) => (
                     <div key={index} className={`region ${riskClassMap[item.risk]}`}>
-                      <span className="region-label">{item.region}</span>
-                      <span className="risk-level">{item.risk}</span>
+                      <span className="region-label">{t(`regions.${item.region.toLowerCase().replace(' ', '_')}`, item.region)}</span>
+                      <span className="risk-level">{t(`risk.${item.risk.toLowerCase()}_risk`, item.risk)}</span>
                     </div>
                   ))}
                 </div>
                 <div className="map-legend">
-                  <div className="legend-item"><span className="legend-color high"></span>Risque Élevé</div>
-                  <div className="legend-item"><span className="legend-color medium"></span>Risque Modéré</div>
-                  <div className="legend-item"><span className="legend-color low"></span>Risque Faible</div>
-                  <div className="legend-item"><span className="legend-color very-low"></span>Très Faible</div>
+                  <div className="legend-item"><span className="legend-color high"></span>{t('risk.high', 'Risque Élevé')}</div>
+                  <div className="legend-item"><span className="legend-color medium"></span>{t('risk.medium', 'Risque Modéré')}</div>
+                  <div className="legend-item"><span className="legend-color low"></span>{t('risk.low', 'Risque Faible')}</div>
+                  <div className="legend-item"><span className="legend-color very-low"></span>{t('risk.very_low', 'Très Faible')}</div>
                 </div>
               </div>
             </div>
@@ -312,7 +314,7 @@ const Dashboard = () => {
 
           {/* Time Series Chart */}
           <div className="chart-card time-series">
-            <h3 className="chart-title">Évolution Temporelle</h3>
+            <h3 className="chart-title">{t('analytics.temporal_evolution', 'Évolution Temporelle')}</h3>
             <div className="chart-period-subtitle">{diseasePeriods[selectedDisease].label}</div>
             <div className="time-series-chart">
               <div className="chart-controls" role="tablist" aria-label="Type de série temporelle">
@@ -322,14 +324,14 @@ const Dashboard = () => {
                   role="tab"
                   aria-selected={timeSeriesType === 'cases'}
                   aria-label="Cas"
-                >Cases</button>
+                >{t('analytics.cases', 'Cases')}</button>
                 <button
                   className={`chart-toggle${timeSeriesType === 'deaths' ? ' active' : ''}`}
                   onClick={() => setTimeSeriesType('deaths')}
                   role="tab"
                   aria-selected={timeSeriesType === 'deaths'}
-                  aria-label="Décès"
-                >Deaths</button>
+                  aria-label={t('analytics.deaths', 'Décès')}
+                >{t('analytics.deaths', 'Deaths')}</button>
               </div>
               <ChartComponent
                 type="bar"
@@ -359,7 +361,7 @@ const Dashboard = () => {
           {/* Top Countries Chart */}
           <div className="chart-card countries-ranking">
             <h3 className="chart-title">
-              Top 8 Pays – {diseaseMeta.label}
+              {t('analytics.countries_ranking', 'Top 8 Pays')} – {diseaseMeta.label}
             </h3>
             <div className="countries-chart">
               {stats.topCountries.map((country, index) => (
@@ -372,15 +374,15 @@ const Dashboard = () => {
                   </div>
                   <div className="country-stats">
                     <div className="stat">
-                      <span className="stat-label">Cases</span>
+                      <span className="stat-label">{t('analytics.cases', 'Cases')}</span>
                       <span className="stat-value">{formatNumber(country.cases)}</span>
                     </div>
                     <div className="stat">
-                      <span className="stat-label">Deaths</span>
+                      <span className="stat-label">{t('analytics.deaths', 'Deaths')}</span>
                       <span className="stat-value">{formatNumber(country.deaths)}</span>
                     </div>
                     <div className="stat">
-                      <span className="stat-label">Rt</span>
+                      <span className="stat-label">{t('health.rt', 'Rt')}</span>
                       <span className="stat-value rt-value" style={{ color: getRtColor(country.rt) }}>{country.rt}</span>
                     </div>
                   </div>
@@ -392,12 +394,12 @@ const Dashboard = () => {
 
           {/* Risk Analysis Pie Chart */}
           <div className="chart-card risk-analysis">
-            <h3 className="chart-title">Analyse des Risques par Région</h3>
+            <h3 className="chart-title">{t('analytics.risk_analysis', 'Analyse des Risques par Région')}</h3>
             <div className="risk-pie-chart">
               <ChartComponent
                 type="doughnut"
                 data={{
-                  labels: ['Élevé', 'Modéré', 'Faible', 'Très Faible'],
+                  labels: [t('risk.high', 'Élevé'), t('risk.medium', 'Modéré'), t('risk.low', 'Faible'), t('risk.very_low', 'Très Faible')],
                   datasets: [{
                     data: [
                       stats.riskAnalysis.highRisk.length,
@@ -419,7 +421,7 @@ const Dashboard = () => {
                     <div className="risk-header">
                       <span className="risk-indicator" style={{ backgroundColor: getRiskColor(level.replace('Risk', '').toLowerCase()) }}></span>
                       <span className="risk-title">
-                        {level.replace('Risk', ' Risk').replace('very', 'Très').replace('high', 'Élevé').replace('medium', 'Modéré').replace('low', 'Faible')}
+                        {t(`risk.${level.replace('Risk', '').toLowerCase()}_risk`, level.replace('Risk', ' Risk'))}
                       </span>
                     </div>
                     <div className="risk-countries">
@@ -438,38 +440,38 @@ const Dashboard = () => {
 
           {/* Model Performance Chart */}
           <div className="chart-card model-performance">
-            <h3 className="chart-title">Performance des Modèles IA</h3>
+            <h3 className="chart-title">{t('analytics.model_performance', 'Performance des Modèles IA')}</h3>
             <div className="performance-chart">
               <div className="model-bars">
                 <div className="model-bar">
-                  <div className="model-name">LSTM (Rt)</div>
+                  <div className="model-name">{t('models.lstm', 'LSTM (Rt)')}</div>
                   <div className="performance-bar">
                     <div className="bar-fill" style={{ width: '68%', backgroundColor: '#3498db' }}><span className="bar-label">68%</span></div>
                   </div>
                 </div>
                 <div className="model-bar">
-                  <div className="model-name">Random Forest (Mortalité)</div>
+                  <div className="model-name">{t('models.random_forest', 'Random Forest (Mortalité)')}</div>
                   <div className="performance-bar">
                     <div className="bar-fill" style={{ width: '82%', backgroundColor: '#27ae60' }}><span className="bar-label">82%</span></div>
                   </div>
                 </div>
                 <div className="model-bar">
-                  <div className="model-name">Clustering (Propagation)</div>
+                  <div className="model-name">{t('models.clustering', 'Clustering (Propagation)')}</div>
                   <div className="performance-bar">
                     <div className="bar-fill" style={{ width: '74%', backgroundColor: '#f39c12' }}><span className="bar-label">74%</span></div>
                   </div>
                 </div>
               </div>
               <div className="performance-summary">
-                <div className="summary-item"><span className="summary-label">Précision Moyenne</span><span className="summary-value">74.7%</span></div>
-                <div className="summary-item"><span className="summary-label">Prédictions Effectuées</span><span className="summary-value">2,847</span></div>
-                <div className="summary-item"><span className="summary-label">Temps de Calcul Moyen</span><span className="summary-value">2.3s</span></div>
+                <div className="summary-item"><span className="summary-label">{t('models.average_accuracy', 'Précision Moyenne')}</span><span className="summary-value">74.7%</span></div>
+                <div className="summary-item"><span className="summary-label">{t('models.predictions_made', 'Prédictions Effectuées')}</span><span className="summary-value">2,847</span></div>
+                <div className="summary-item"><span className="summary-label">{t('models.average_computation_time', 'Temps de Calcul Moyen')}</span><span className="summary-value">2.3s</span></div>
               </div>
               <div className="model-explanation" aria-live="polite">
                 <ul>
-                  <li><b>LSTM (Rt)</b> : Prédiction du taux de transmission (Rt) à partir de séries temporelles.</li>
-                  <li><b>Random Forest (Mortalité)</b> : Analyse des facteurs de risque et estimation de la mortalité.</li>
-                  <li><b>Clustering (Propagation)</b> : Identification des clusters géographiques à risque.</li>
+                  <li><b>{t('models.lstm', 'LSTM (Rt)')}</b> : {t('models.lstm_description', 'Prédiction du taux de transmission (Rt) à partir de séries temporelles.')}</li>
+                  <li><b>{t('models.random_forest', 'Random Forest (Mortalité)')}</b> : {t('models.random_forest_description', 'Analyse des facteurs de risque et estimation de la mortalité.')}</li>
+                  <li><b>{t('models.clustering', 'Clustering (Propagation)')}</b> : {t('models.clustering_description', 'Identification des clusters géographiques à risque.')}</li>
                 </ul>
               </div>
             </div>
@@ -484,79 +486,79 @@ const Dashboard = () => {
         <div className="module-card">
           <div className="module-header">
             <h3 className="module-title">
-              Prédiction Taux de Transmission (Rt)
+              {t('prediction.rt', 'Prédiction Taux de Transmission (Rt)')}
             </h3>
             <p className="module-description">
-              Modèle LSTM pour prédire l'évolution du taux de reproduction effectif
+              {t('models.lstm_description', 'Modèle LSTM pour prédire l\'évolution du taux de reproduction effectif')}
             </p>
           </div>
           <div className="module-stats">
             <div className="module-stat">
               <span className="stat-number">60-70%</span>
-              <span className="stat-text">Précision</span>
+              <span className="stat-text">{t('common.accuracy', 'Précision')}</span>
             </div>
             <div className="module-stat">
               <span className="stat-number">30 jours</span>
-              <span className="stat-text">Horizon</span>
+              <span className="stat-text">{t('common.horizon', 'Horizon')}</span>
             </div>
           </div>
           <a href="/predictions/rt" className="module-button">
-            Accéder aux Prédictions Rt
+{t('prediction.predict_rt', 'Accéder aux Prédictions Rt')}
           </a>
         </div>
 
         <div className="module-card">
           <div className="module-header">
             <h3 className="module-title">
-              Prédiction Taux de Mortalité
+              {t('prediction.mortality', 'Prédiction Taux de Mortalité')}
             </h3>
             <p className="module-description">
-              Random Forest pour analyser les facteurs de mortalité
+              {t('models.random_forest_description', 'Random Forest pour analyser les facteurs de mortalité')}
             </p>
           </div>
           <div className="module-stats">
             <div className="module-stat">
               <span className="stat-number">80-85%</span>
-              <span className="stat-text">Précision</span>
+              <span className="stat-text">{t('common.accuracy', 'Précision')}</span>
             </div>
             <div className="module-stat">
               <span className="stat-number">30 jours</span>
-              <span className="stat-text">Horizon</span>
+              <span className="stat-text">{t('common.horizon', 'Horizon')}</span>
             </div>
           </div>
           <a href="/predictions/mortality" className="module-button">
-            Analyser la Mortalité
+{t('prediction.predict_mortality', 'Analyser la Mortalité')}
           </a>
         </div>
 
         <div className="module-card">
           <div className="module-header">
             <h3 className="module-title">
-              Propagation Géographique
+              {t('prediction.spread', 'Propagation Géographique')}
             </h3>
             <p className="module-description">
-              Clustering pour identifier les patterns de propagation
+              {t('models.clustering_description', 'Clustering pour identifier les patterns de propagation')}
             </p>
           </div>
           <div className="module-stats">
             <div className="module-stat">
               <span className="stat-number">70-75%</span>
-              <span className="stat-text">Précision</span>
+              <span className="stat-text">{t('common.accuracy', 'Précision')}</span>
             </div>
             <div className="module-stat">
-              <span className="stat-number">Temps réel</span>
-              <span className="stat-text">Analyse</span>
+              <span className="stat-number">{t('common.real_time', 'Temps réel')}</span>
+              <span className="stat-text">{t('common.analysis', 'Analyse')}</span>
             </div>
           </div>
           <a href="/predictions/spread" className="module-button">
-            Voir la Propagation
+{t('prediction.predict_spread', 'Voir la Propagation')}
           </a>
         </div>
       </div>
 
       {/* Recent Predictions */}
       <div className="recent-predictions">
-        <h2 className="section-title">Prédictions Récentes</h2>
+        <h2 className="section-title">{t('common.recent_predictions', 'Prédictions Récentes')}</h2>
         <div className="predictions-grid">
           {stats.recentPredictions.map((prediction) => (
             <div key={prediction.id} className="prediction-card" title={`Prédiction ${prediction.type} pour ${prediction.country}`} aria-label={`Prédiction ${diseaseMeta.label} ${prediction.type} ${prediction.country}`}>

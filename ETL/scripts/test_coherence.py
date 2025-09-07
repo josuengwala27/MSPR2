@@ -66,8 +66,8 @@ def test_data_flow():
     """Teste le flux de données entre Extraction et Transformation"""
     print("\n Test du flux de données")
     
-    raw_data_dir = Path('../raw_data')
-    processed_dir = Path('../processed')
+    raw_data_dir = Path('/app/raw_data')
+    processed_dir = Path('/app/processed')
     
     # Vérification des répertoires
     if not raw_data_dir.exists():
@@ -118,7 +118,7 @@ def test_schema_consistency():
     print("\n Test de cohérence des schémas")
     
     # Vérification des colonnes attendues dans les données transformées
-    processed_dir = Path('../processed')
+    processed_dir = Path('/app/processed')
     
     if not processed_dir.exists():
         print("Pas de données transformées à vérifier")
@@ -197,7 +197,7 @@ def test_dim_country_coherence():
     """Teste la cohérence de la table dim_country"""
     print("\n Test de cohérence dim_country")
     
-    processed_dir = Path('../processed')
+    processed_dir = Path('/app/processed')
     dim_country_path = processed_dir / 'dim_country.csv'
     
     if not dim_country_path.exists():
@@ -257,7 +257,7 @@ def test_fact_tables_data_quality():
     """Teste la qualité des données dans les tables de faits"""
     print("\n Test qualité des données (tables de faits)")
     
-    processed_dir = Path('../processed')
+    processed_dir = Path('/app/processed')
     
     # Test COVID
     covid_path = processed_dir / 'fact_covid_history.csv'

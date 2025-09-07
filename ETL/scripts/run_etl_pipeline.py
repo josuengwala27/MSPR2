@@ -101,7 +101,7 @@ class ETLPipeline:
             self.logger.error(f"Dependance manquante: {e}")
             return False
         
-        required_dirs = ['../raw_data', '../processed', '../logs']
+        required_dirs = ['/app/raw_data', '/app/processed', '/app/logs']
         for dir_path in required_dirs:
             dir_obj = Path(dir_path)
             if not dir_obj.exists():
@@ -145,12 +145,12 @@ class ETLPipeline:
         self.logger.info("\nVERIFICATION DES FICHIERS DE SORTIE")
         
         expected_files = [
-            '../raw_data/worldometer_coronavirus_daily_data.csv',
-            '../raw_data/owid-monkeypox-data.csv',
-            '../processed/fact_covid_history.csv',
-            '../processed/fact_mpox_history.csv',
-            '../processed/dim_country.csv',
-            '../processed/dim_indicator.csv'
+            '/app/raw_data/worldometer_coronavirus_daily_data.csv',
+            '/app/raw_data/owid-monkeypox-data.csv',
+            '/app/processed/fact_covid_history.csv',
+            '/app/processed/fact_mpox_history.csv',
+            '/app/processed/dim_country.csv',
+            '/app/processed/dim_indicator.csv'
         ]
         
         all_exist = True
